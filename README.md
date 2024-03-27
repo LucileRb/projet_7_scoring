@@ -1,5 +1,7 @@
 # projet_7_scoring
 
+# CREER ENV VIRTUEL
+
 1) Mettre en oeuvre un outil de "scoring crédit" pour calculer la probabilié qu'un client rembourse son crédit
 2) classifier la demande en crédit accordé/refusé
 

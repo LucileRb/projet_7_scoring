@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139217507306766994/42edd7f6fdde4fcaab40c916559d6168/artifacts
+end_time: 1712055802474
+entry_point_name: ''
+experiment_id: '139217507306766994'
+lifecycle_stage: active
+run_id: 42edd7f6fdde4fcaab40c916559d6168
+run_name: smiling-lamb-759
+run_uuid: 42edd7f6fdde4fcaab40c916559d6168
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1712055800597
+status: 3
+tags: []
+user_id: lucilerabeau

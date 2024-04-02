@@ -35,3 +35,21 @@ https://www.heroku.com/github-students
 -> très chiant car impossible de trouver un school ID d'openclassrooms -> https://education.github.com/discount_requests/14236253/additional_information
 demande faite le 01/04/24 - en attente de validation
 
+# Feature engineering
+pas besoin de pousser
+2-3 variables déjà bien
+
+# Score
+personne qui ne va pas rembourser le crédit coutera 10x plus cher (pénaliser de 10)
+cas contraire -> pénalisé de 1
+
+f-score -> se rapproche pas mal de ça mais ne répond pas totalement à mon besoin
+à mentionner mais créer une fonction de scoring vraiment custom
+
+make_scorer -> à regarder - à utiliser aussi pour gridsearch, etc...
+
+# Evaluation des modèles
+gridsearchCV
+comparer/créer modèles -> baseline = accorder de façon aléatoire des crédits (genre tirer à pile ou face si on accorde les crédits ou non)
+
+# Analyse de l'importance des features (globales ou locales)

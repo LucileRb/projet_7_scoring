@@ -53,3 +53,9 @@ gridsearchCV
 comparer/créer modèles -> baseline = accorder de façon aléatoire des crédits (genre tirer à pile ou face si on accorde les crédits ou non)
 
 # Analyse de l'importance des features (globales ou locales)
+
+
+
+
+craft AI -> plateforme de MLOps
+mise en prod

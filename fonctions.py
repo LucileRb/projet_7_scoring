@@ -72,11 +72,48 @@ def nan_detection(df):
         plt.show()
 
 
-########## Catégorie ##########
-def get_category(row):
-    match = re.search(r'(?:\w+\s+){2}(?=\>\>)', row['product_category_tree'])
-    if match:
-        result = match.group(0).strip()
-        return result
+########## Fonction de coût ##########
+
+def cout_metier(y_true, y_pred, seuil = 0.5, fn_value = -0.7, fp_value = -0.2, vp_value = 0, vn_value = 0.2):
+
+    '''
+    Métrique métier tentant de minimiser le risque d'accord prêt pour la
+    banque en pénalisant les faux négatifs.
+    '''
+    
+    # Liste des prédiction selon un seuil de probabilité
+    y_seuil = []
+
+    for i in y_pred:
+        if i >= seuil:
+            y_seuil.append(1)
+        elif i < seuil:
+            y_seuil.append(0)
+    
+    # Matrice de Confusion
+    mat_conf = confusion_matrix(y_true, y_pred)
+    
+    # Nombre de True Negatifs
+    vn = mat_conf[0, 0]
+    # Nombre de Faux Négatifs
+    fn = mat_conf[1, 0]
+    # Nombre de Faux Positifs
+    fp = mat_conf[0, 1]
+    # Nombre de True Positifs
+    vp = mat_conf[1, 1]
+    
+    # Gain total
+    J = vp*vp_value + vn*vn_value + fp*fp_value + fn*fn_value
+    
+    # Gain maximum
+    max_J = (fp + vn)*vn_value + (fn + vp)*vp_value
+    
+    # Gain minimum
+    min_J = (fp + vn)*fp_value + (fn + vp)*fn_value
+    
+    # Gain normalisé entre 0 et 1
+    J_normalized = (J - min_J)/(max_J - min_J)
+    
+    return J_normalized  # Retourne la fonction d'évaluation
 
 ################################ END ########################################

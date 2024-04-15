@@ -59,3 +59,9 @@ comparer/créer modèles -> baseline = accorder de façon aléatoire des crédit
 
 craft AI -> plateforme de MLOps
 mise en prod
+
+
+Modélisation : algos Catboost, LightGBM & XGBoost
+
+# scoring
+f beta score -> à regarder

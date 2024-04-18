@@ -1,3 +1,4 @@
 # Lister élements que git doit ignorer:
 # Données
 data/
+results/

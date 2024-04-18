@@ -72,6 +72,47 @@ def nan_detection(df):
         plt.show()
 
 
+def csv_describe(folder):
+    '''
+    Fonction pour décrire les csv contenus dans un dossier donné sous forme de dataframe:
+    Shape, Valeurs manquantes, info...'''
+
+    data_dict = {}
+
+    for file in folder:
+        data = pd.read_csv(file, encoding = 'ISO-8859-1')
+
+        data_dict[file] = [
+            data.shape[0], # Nb de lignes
+            data.shape[1], # Nb de colonnes
+            round(data.isna().sum().sum()/data.size*100, 2), # % valeurs manquantes
+            round(data.duplicated().sum().sum()/data.size*100, 2), # % duplicats
+            data.select_dtypes(include = ['object']).shape[1], # nb d'objets
+            data.select_dtypes(include = ['float']).shape[1], # nb de float
+            data.select_dtypes(include = ['int']).shape[1], # nb d'int
+            data.select_dtypes(include = ['bool']).shape[1], # nb de bool
+            round(data.memory_usage().sum()/1024**2, 3) # mémoire utilisée
+            ]
+
+        comparative_table = pd.DataFrame.from_dict(
+            data = data_dict,
+            columns = [
+                'Rows',
+                'Columns',
+                '%NaN',
+                '%Duplicate',
+                'object_dtype',
+                'float_dtype',
+                'int_dtype',
+                'bool_dtype',
+                'MB_Memory'
+                ],
+            orient = 'index')
+    return comparative_table
+
+
+
+
 ########## Fonction de coût ##########
 
 def cout_metier(y_true, y_pred, seuil = 0.5, fn_value = -0.7, fp_value = -0.2, vp_value = 0, vn_value = 0.2):

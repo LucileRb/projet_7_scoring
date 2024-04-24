@@ -7,6 +7,19 @@ import seaborn as sns
 import re
 from IPython.display import display
 
+import pickle
+import os
+
+from sklearn.model_selection import train_test_split
+
+#Preprocessing, Upsampling, Model Selection, Model Evaluation
+from imblearn.over_sampling import SMOTE
+from sklearn.metrics import accuracy_score, roc_auc_score, f1_score, precision_score, recall_score 
+from sklearn.metrics import classification_report, confusion_matrix, roc_curve
+from imblearn.pipeline import make_pipeline, Pipeline
+from sklearn.model_selection import cross_val_predict, cross_val_score, learning_curve, cross_validate
+from sklearn.feature_selection import RFECV
+
 ##########################################################################################################################################################################
 ########## Fonctions 'générlistes' ##########
 
@@ -111,50 +124,90 @@ def csv_describe(folder):
     return comparative_table
 
 
+#########################################################################################
+### Fonctions pour faciliter l'analyse des principales variables
+# (trouvées dans divers notebooks en ligne)
+
+def plot_stat(data, feature, title):
+    """ Fonctions pour faire blablabla """
+
+    ax, fig = plt.subplots(figsize = (7, 5))
+    ax = sns.countplot(y = feature, data = data, order=data[feature].value_counts(ascending = False).index)
+    ax.set_title(title)
+
+    for p in ax.patches:
+                percentage = '{:.1f}%'.format(100 * p.get_width()/len(data[feature]))
+                x = p.get_x() + p.get_width()
+                y = p.get_y() + p.get_height()/2
+                ax.annotate(percentage, (x, y), fontsize = 14, fontweight = 'bold')
+
+    plt.show()
 
 
-########## Fonction de coût ##########
+def plot_percent_target1(data, feature, title):
 
-def cout_metier(y_true, y_pred, seuil = 0.5, fn_value = -0.7, fp_value = -0.2, vp_value = 0, vn_value = 0.2):
+    """ Fonctions pour faire blablabla """
 
-    '''
-    Métrique métier tentant de minimiser le risque d'accord prêt pour la
-    banque en pénalisant les faux négatifs.
-    '''
+    cat_perc = data[[feature, 'TARGET']].groupby([feature], as_index = False).mean()
+    cat_perc.sort_values(by = 'TARGET', ascending = False, inplace = True)
     
-    # Liste des prédiction selon un seuil de probabilité
-    y_seuil = []
+    ax, fig = plt.subplots(figsize = (7, 5))
+    ax = sns.barplot(y = feature, x = 'TARGET', data = cat_perc)
+    ax.set_title(title)
+    ax.set_xlabel('')
+    ax.set_ylabel('Percent of target with value 1')
 
-    for i in y_pred:
-        if i >= seuil:
-            y_seuil.append(1)
-        elif i < seuil:
-            y_seuil.append(0)
-    
-    # Matrice de Confusion
-    mat_conf = confusion_matrix(y_true, y_pred)
-    
-    # Nombre de True Negatifs
-    vn = mat_conf[0, 0]
-    # Nombre de Faux Négatifs
-    fn = mat_conf[1, 0]
-    # Nombre de Faux Positifs
-    fp = mat_conf[0, 1]
-    # Nombre de True Positifs
-    vp = mat_conf[1, 1]
-    
-    # Gain total
-    J = vp*vp_value + vn*vn_value + fp*fp_value + fn*fn_value
-    
-    # Gain maximum
-    max_J = (fp + vn)*vn_value + (fn + vp)*vp_value
-    
-    # Gain minimum
-    min_J = (fp + vn)*fp_value + (fn + vp)*fn_value
-    
-    # Gain normalisé entre 0 et 1
-    J_normalized = (J - min_J)/(max_J - min_J)
-    
-    return J_normalized  # Retourne la fonction d'évaluation
+    for p in ax.patches:
+                percentage = '{:.1f}%'.format(100 * p.get_width())
+                x = p.get_x() + p.get_width()
+                y = p.get_y() + p.get_height()/2
+                ax.annotate(percentage, (x, y), fontsize = 14, fontweight = 'bold')
+    plt.show()
+
+
+
+#Plot distribution of one feature
+def plot_distribution(df, feature, title):
+    plt.figure(figsize = (7, 5))
+
+    t0 = df.loc[df['TARGET'] == 0]
+    t1 = df.loc[df['TARGET'] == 1]
+
+    sns.kdeplot(t0[feature].dropna(), color = 'blue', label = 'TARGET = 0')
+    sns.kdeplot(t1[feature].dropna(), color = 'red', label = 'TARGET = 1')
+    plt.title(title)
+    plt.ylabel('')
+    plt.legend()
+    plt.show()
+
+
+
+def cf_matrix_roc_auc(model, y_true, y_pred, y_pred_proba, roc_auc):
+    '''This function will make a pretty plot of 
+  an sklearn Confusion Matrix using a Seaborn heatmap visualization + ROC Curve.'''
+    fig = plt.figure(figsize = (20, 15))
+  
+    plt.subplot(221)
+    cf_matrix = confusion_matrix(y_true, y_pred)
+    group_names = ['True Neg', 'False Pos', 'False Neg', 'True Pos']
+    group_counts = ['{0:0.0f}'.format(value) for value in cf_matrix.flatten()]
+    group_percentages = ['{0:.2%}'.format(value) for value in cf_matrix.flatten()/np.sum(cf_matrix)]
+  
+    labels = [f"{v1}\n{v2}\n{v3}" for v1, v2, v3 in zip(group_names, group_counts, group_percentages)]
+    labels = np.asarray(labels).reshape(2, 2)
+    sns.heatmap(cf_matrix, annot = labels, fmt = '', cmap = 'Blues')
+
+    plt.subplot(222)
+    fpr,tpr,_ = roc_curve(y_true, y_pred_proba)
+    plt.plot(fpr, tpr, color = 'orange', linewidth = 5, label = 'AUC = %0.4f' %roc_auc)
+    plt.plot([0, 1], [0, 1], color = 'darkblue', linestyle = '--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.legend()
+
+    plt.show()
+
+#########################################################################################
+
 
 ################################ END ########################################

@@ -46,6 +46,8 @@ cas contraire -> pénalisé de 1
 f-score -> se rapproche pas mal de ça mais ne répond pas totalement à mon besoin
 à mentionner mais créer une fonction de scoring vraiment custom
 
+f beta score -> à regarder
+
 make_scorer -> à regarder - à utiliser aussi pour gridsearch, etc...
 
 # Evaluation des modèles
@@ -63,5 +65,6 @@ mise en prod
 
 Modélisation : algos Catboost, LightGBM & XGBoost
 
-# scoring
-f beta score -> à regarder
+
+# se focaliser sur une seule métrique pour prendre des décisions
+# quand plusieurs métriques -> on ne sait plus laquelle suivre

@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/758371766557830604/8cd42693398d4965b774f5f68fce80c1/artifacts
+end_time: 1714056183795
+entry_point_name: ''
+experiment_id: '758371766557830604'
+lifecycle_stage: active
+run_id: 8cd42693398d4965b774f5f68fce80c1
+run_name: Test modèles
+run_uuid: 8cd42693398d4965b774f5f68fce80c1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1714055388814
+status: 3
+tags: []
+user_id: lucilerabeau

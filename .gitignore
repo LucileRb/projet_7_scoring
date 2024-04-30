@@ -4,3 +4,6 @@ data/
 results/
 Scoring/
 catboost_info/
+mlruns/
+mlartifacts/
+exemples/

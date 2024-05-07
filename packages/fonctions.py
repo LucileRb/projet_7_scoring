@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import re
 from IPython.display import display
+from packages import cost
 
 import pickle
 import os
@@ -206,6 +207,75 @@ def cf_matrix_roc_auc(model, y_true, y_pred, y_pred_proba, roc_auc):
     plt.legend()
 
     plt.show()
+
+
+
+
+def train_models(model, X_train, X_test, y_train, y_test):
+    """ 
+    Fonction pour calculer les métriques auc, accuracy, f1, precision et recall
+    """
+
+    model.fit(X_train, y_train)
+    output = {
+      'AUC': roc_auc_score(y_test, model.predict_proba(X_test)[:,1]),
+      'Accuracy': accuracy_score(y_test, model.predict(X_test)),
+      'Precision': precision_score(y_test, model.predict(X_test)),
+      'Recall': recall_score(y_test, model.predict(X_test)),
+      'F1': f1_score(y_test, model.predict(X_test)),
+      'Custom' : cost.custom_metric(y_test, model.predict(X_test))
+      }
+
+    return output
+
+
+def plot_learning_curve(N, train_score, val_score):
+    plt.figure(figsize = (7,5))
+    plt.grid()
+    plt.plot(N, train_score.mean(axis = 1), 'o-', color = 'r', label = 'Train')
+    plt.plot(N, val_score.mean(axis = 1), 'o-', color  = 'g', label = 'Validation')
+    plt.title ('Learning Curve', fontsize = 15, color = 'darkblue')
+    plt.legend(loc = 'best')
+    plt.xlabel('train_sizes')
+    plt.ylabel('score')
+    plt.show()
+
+def plot_predictions(y_train, y_pred_train_default, y_test, y_pred_test_default, y_pred_train_best, y_pred_test_best):
+    plt.figure(figsize = (25, 10))
+    plt.subplot(2, 2, 1)
+    plt.plot(y_train.values, color = 'orange')
+    plt.plot(y_pred_train_default, color = 'blue')
+    plt.title('train - default')
+    plt.subplot(2, 2, 2)
+    plt.plot(y_test.values, color = 'orange')
+    plt.plot(y_pred_test_default, color = 'green')
+    plt.title('test - default')
+    plt.subplot(2, 2, 3)
+    plt.plot(y_train.values, color = 'orange')
+    plt.plot(y_pred_train_best, color = 'blue')
+    plt.title('train - best params')
+    plt.subplot(2, 2, 4)
+    plt.plot(y_test.values, color = 'orange')
+    plt.plot(y_pred_test_best, color = 'green')
+    plt.title('test - best params')
+    plt.show()
+
+
+# Plot prédictions
+def plot_predictions_train_test(y_train, y_pred_train_default, y_pred_train_best, y_test, y_pred_test_default, y_pred_test_best):
+    plt.figure(figsize = (25, 10))
+    ax1 = plt.subplot2grid((1, 5), (0, 0), colspan = 3)
+    ax1.plot(y_train.values, color = 'orange', linestyle = '--', label = 'y_train')
+    ax1.plot(y_pred_train_default, color = 'blue', label = 'y_pred train (default)')
+    ax1.plot(y_pred_train_best, color = 'green', label = 'y_pred train (best)')
+    plt.legend(loc = 'best')
+    ax2 = plt.subplot2grid((1, 5), (0, 3), colspan = 2)
+    ax2.plot(y_test.values, color = 'orange', linestyle = '--', label = 'y_test')
+    ax2.plot(y_pred_test_default, color = 'blue', label = 'y_pred test (default)')
+    ax2.plot(y_pred_test_best, color = 'green', label = 'y_pred test (best)')
+    plt.legend(loc = 'best')
+    plt.show()
+
 
 #########################################################################################
 

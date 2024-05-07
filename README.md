@@ -68,3 +68,5 @@ Modélisation : algos Catboost, LightGBM & XGBoost
 
 # se focaliser sur une seule métrique pour prendre des décisions
 # quand plusieurs métriques -> on ne sait plus laquelle suivre
+
+Setup Mac bureau : python 3.11.3 | MacBook Air puce Apple M2 OS Sonoma version 14.4.1

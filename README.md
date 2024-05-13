@@ -70,3 +70,7 @@ Modélisation : algos Catboost, LightGBM & XGBoost
 # quand plusieurs métriques -> on ne sait plus laquelle suivre
 
 Setup Mac bureau : python 3.11.3 | MacBook Air puce Apple M2 OS Sonoma version 14.4.1
+
+
+
+TO DO -> lister références pour chaque notebook/fichier

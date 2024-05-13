@@ -73,4 +73,15 @@ Setup Mac bureau : python 3.11.3 | MacBook Air puce Apple M2 OS Sonoma version 1
 
 
 
-TO DO -> lister références pour chaque notebook/fichier
+TO DO 
+-> lister références pour chaque notebook/fichier
+-> ajouter ligthgbm (https://inside-machinelearning.com/lightgbm/)
+-> shap (https://coderzcolumn.com/tutorials/machine-learning/shap-explain-machine-learning-model-predictions-using-game-theoretic-approach)
+-> data drift
+-> streamlit
+-> deploiement
+-> slides
+
+Inspirations
+https://github.com/eleplanois/openclassRoom/tree/main/Projet_7%20Impl%C3%A9mentez%20un%20mod%C3%A8le%20de%20scoring
+https://github.com/nalron/project_credit_scoring_model

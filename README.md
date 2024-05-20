@@ -66,4 +66,4 @@ When you create an app, a git remote called heroku is also created and associate
 
 Deploy your code. This command pushes the main branch of the sample repo to your heroku remote, which then deploys to Heroku
 
-modif
+ATTENTION -> ne pas mettre d'extension après Procfile ("Procfile" et non "Procfile.txt") -> sinon le fichier ne sera pas reconnu par Heroku

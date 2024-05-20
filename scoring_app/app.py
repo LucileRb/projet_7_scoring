@@ -27,7 +27,7 @@ app_mode = st.sidebar.selectbox('Select Page', ['Home', 'Prediction']) #two page
 
 if app_mode == 'Home':
     st.title('LOAN PREDICTION :')
-    st.image('app_illustrations/paying-off-a-loan-early.jpg')
+    st.image('scoring_app/app_illustrations/paying-off-a-loan-early.jpg')
     st.markdown('Dataset :')
 
     path = ''
@@ -46,7 +46,7 @@ if app_mode == 'Home':
         st.write(data.loc[data['SK_ID_CURR'] == loan_id])
 
 elif app_mode == 'Prediction':
-    st.image('app_illustrations/multi-currency-iban.jpg')
+    st.image('scoring_app/app_illustrations/multi-currency-iban.jpg')
     st.subheader('Bonjour, merci de remplir les informations suivantes à propos du client afin de déterminer si nous devons acceder à sa demande de prêt:')
     st.sidebar.header('Informations à propos du client:')
 

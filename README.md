@@ -1,9 +1,4 @@
-# OC7 : Implement a scoring model
-
-# Environnement virtuel
-python3 -m venv venv
-c'est tout ????? meh
-problème -> si env virtuel déjà présent -> va charger celui là au lieu d'en créer un nouveau
+# Implement a scoring model
 
 # Descriptif du projet
 1) Mettre en oeuvre un outil de "scoring crédit" pour calculer la probabilié qu'un client rembourse son crédit
@@ -13,14 +8,6 @@ problème -> si env virtuel déjà présent -> va charger celui là au lieu d'en
 -> réaliser un dashboard intéractif (Dash ou Bokeh ou Streamlit)
 
 Données : https://www.kaggle.com/c/home-credit-default-risk/data
-
-Liste d'outils à utliser pour créer une plateforme MLOps:
-- MLFlow pour la gestion “d’expériences” et leur tracking lors de la phase d’entraînement des modèles, ainsi que la visualisation des résultats avec MLFlow UI, pour le partager avec Chris
-- MLFlow pour le stockage centralisé des modèles dans un “model registry” et le serving
-- Git, logiciel de version de code, pour suivre les modifications du code final de l’API de prédiction de tags à déployer
-- Github pour stocker et partager sur le cloud le code de l’API, alimenté par un “push” Git et ainsi assurer une intégration continue
-- Github Actions pour le déploiement continu et automatisé du code de l’API sur le cloud
-- Pytest (ou Unittest) pour concevoir les tests unitaires et les exécuter de manière automatisée lors du build réalisé par Github Actions
 
 
 # ML Flow
@@ -55,33 +42,29 @@ gridsearchCV
 comparer/créer modèles -> baseline = accorder de façon aléatoire des crédits (genre tirer à pile ou face si on accorde les crédits ou non)
 
 # Analyse de l'importance des features (globales ou locales)
-
-
-
-
 craft AI -> plateforme de MLOps
 mise en prod
 
-
 Modélisation : algos Catboost, LightGBM & XGBoost
-
 
 # se focaliser sur une seule métrique pour prendre des décisions
 # quand plusieurs métriques -> on ne sait plus laquelle suivre
 
 Setup Mac bureau : python 3.11.3 | MacBook Air puce Apple M2 OS Sonoma version 14.4.1
 
-
-
-TO DO 
--> lister références pour chaque notebook/fichier
--> ajouter ligthgbm (https://inside-machinelearning.com/lightgbm/)
--> shap (https://coderzcolumn.com/tutorials/machine-learning/shap-explain-machine-learning-model-predictions-using-game-theoretic-approach)
--> data drift
--> streamlit
--> deploiement
--> slides
-
 Inspirations
 https://github.com/eleplanois/openclassRoom/tree/main/Projet_7%20Impl%C3%A9mentez%20un%20mod%C3%A8le%20de%20scoring
 https://github.com/nalron/project_credit_scoring_model
+
+
+HEROKU
+Procfile = fichier texte à la racine du dossier de l'application, pour déclarer quelle commande executer pour démarrer l'app
+https://devcenter.heroku.com/articles/getting-started-with-python#create-and-deploy-the-app
+https://devcenter.heroku.com/articles/heroku-cli-commands#heroku-apps-create-app
+https://lit-cove-87268-9b9a2d0fbdb8.herokuapp.com/ | https://git.heroku.com/lit-cove-87268.git
+When you create an app, a git remote called heroku is also created and associated with your local git repository. Git remotes are versions of your repository that live on other servers. You deploy your app by pushing its code to that special Heroku-hosted remote associated with your app.
+
+Deploy your code. This command pushes the main branch of the sample repo to your heroku remote, which then deploys to Heroku
+
+# Pour avoir la liste des requirements:
+ pip freeze > requirements.txt 

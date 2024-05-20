@@ -1,5 +1,0 @@
-Liste des notebooks kaggle explorés / à explorer:
-
-https://www.kaggle.com/code/willkoehrsen/start-here-a-gentle-introduction
-https://www.kaggle.com/code/willkoehrsen/introduction-to-manual-feature-engineering
-https://www.kaggle.com/code/jsaguiar/lightgbm-with-simple-features

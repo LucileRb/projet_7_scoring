@@ -182,26 +182,39 @@ def plot_distribution(df, feature, title):
     plt.show()
 
 
+def cf_matrix_roc_auc(model, y_true, X_test, y_pred, y_pred_proba):
+    '''
+    This function will make a pretty plot of an sklearn Confusion Matrix using a Seaborn heatmap visualization + ROC Curve.
+    '''
 
-def cf_matrix_roc_auc(model, y_true, y_pred, y_pred_proba, roc_auc):
-    '''This function will make a pretty plot of 
-  an sklearn Confusion Matrix using a Seaborn heatmap visualization + ROC Curve.'''
-    fig = plt.figure(figsize = (20, 15))
-  
+    fig = plt.figure(figsize = (15, 10))
+
+    accuracy = accuracy_score(y_true, y_pred),
+    roc_auc = roc_auc_score(y_true, y_pred_proba)
+
     plt.subplot(221)
     cf_matrix = confusion_matrix(y_true, y_pred)
     group_names = ['True Neg', 'False Pos', 'False Neg', 'True Pos']
     group_counts = ['{0:0.0f}'.format(value) for value in cf_matrix.flatten()]
     group_percentages = ['{0:.2%}'.format(value) for value in cf_matrix.flatten()/np.sum(cf_matrix)]
-  
+
     labels = [f"{v1}\n{v2}\n{v3}" for v1, v2, v3 in zip(group_names, group_counts, group_percentages)]
     labels = np.asarray(labels).reshape(2, 2)
     sns.heatmap(cf_matrix, annot = labels, fmt = '', cmap = 'Blues')
 
     plt.subplot(222)
-    fpr,tpr,_ = roc_curve(y_true, y_pred_proba)
-    plt.plot(fpr, tpr, color = 'orange', linewidth = 5, label = 'AUC = %0.4f' %roc_auc)
+    fpr, tpr, thresholds = roc_curve(y_true, y_pred_proba)
+    plt.plot(fpr, tpr, color = 'orange', linewidth = 4, label = 'AUC = %0.4f' %roc_auc)
     plt.plot([0, 1], [0, 1], color = 'darkblue', linestyle = '--')
+
+    # calculez l'accuracy pour chaque seuil de classification
+    accuracies = []
+    for threshold in thresholds:
+        y_pred = np.where(y_pred_proba >= threshold, 1, 0)
+        accuracy = accuracy_score(y_true, y_pred)
+        accuracies.append(accuracy)
+    plt.plot(thresholds, accuracies, color = 'purple', linewidth = 4, label = 'Accuracy')
+
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
     plt.legend()
@@ -209,11 +222,9 @@ def cf_matrix_roc_auc(model, y_true, y_pred, y_pred_proba, roc_auc):
     plt.show()
 
 
-
-
 def train_models(model, X_train, X_test, y_train, y_test):
     """ 
-    Fonction pour calculer les métriques auc, accuracy, f1, precision et recall
+    Fonction pour calculer les métriques auc, accuracy, f1, precision, recall ainsi que la métrique custom
     """
 
     model.fit(X_train, y_train)
@@ -223,7 +234,7 @@ def train_models(model, X_train, X_test, y_train, y_test):
       'Precision': precision_score(y_test, model.predict(X_test)),
       'Recall': recall_score(y_test, model.predict(X_test)),
       'F1': f1_score(y_test, model.predict(X_test)),
-      'Custom' : cost.custom_metric(y_test, model.predict(X_test))
+      'Custom' : cost.custom_metric(y_test, model.predict(X_test)),
       }
 
     return output

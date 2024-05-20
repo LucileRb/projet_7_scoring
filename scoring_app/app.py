@@ -31,7 +31,7 @@ if app_mode == 'Home':
     st.markdown('Dataset :')
 
     path = ''
-    filepath = os.path.join(path, '../data/df_merged')
+    filepath = os.path.join(path, 'data/df_merged')
     with open(filepath, 'rb') as f:
         data = pickle.load(f)
 
@@ -93,12 +93,12 @@ elif app_mode == 'Prediction':
 
     if st.button('Predict'):
         # faire la prédiction en utilisant le modèle entrainé
-        loaded_model = pickle.load(open('../best_model', 'rb'))
+        loaded_model = pickle.load(open('best_model', 'rb'))
         prediction = loaded_model['classification'].predict(single_sample)
 
         if prediction[0] == 0:
             # Prêt rejeté
-            file = open('app_illustrations/Loan-Rejection.jpg', 'rb')
+            file = open('scoring_app/app_illustrations/Loan-Rejection.jpg', 'rb')
             contents = file.read()
             data_url_no = base64.b64encode(contents).decode('utf-8')
             file.close()
@@ -107,7 +107,7 @@ elif app_mode == 'Prediction':
 
         elif prediction[0] == 1:
             # Prêt accepté
-            file_ = open('app_illustrations/bank-loan-successfully-illustration-concept-white-background_701961-3161.avif', "rb")
+            file_ = open('scoring_app/app_illustrations/bank-loan-successfully-illustration-concept-white-background_701961-3161.avif', "rb")
             contents = file_.read()
             data_url = base64.b64encode(contents).decode('utf-8')
             file_.close()
@@ -116,7 +116,7 @@ elif app_mode == 'Prediction':
 
 
         # Afficher l'explication de la prédiction (waterfall plot)
-        explainer = pickle.load(open('../explainer', 'rb'))
+        explainer = pickle.load(open('explainer', 'rb'))
         shap_values = explainer(single_sample)
         st.header('Explication de la prédiction:')
         fig, ax = plt.subplots(figsize = (10, 5))

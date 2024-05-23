@@ -5,26 +5,22 @@ Lien vers les données : https://www.kaggle.com/c/home-credit-default-risk/data
 
 # Structure du Projet
 Le projet est organisé de la manière suivante :
-- data/ : Ce répertoire contient les données utilisées pour l'entraînement et le test du modèle.
+- data/ : Ce répertoire contient les données utilisées pour l'entraînement et le test du modèle (dossier ignoré par github)
 - packages/ : Contient les scripts et les modules Python utilisés pour le prétraitement des données, l'entraînement du modèle, l'évaluation et l'interprétation des résultats.
 - mlruns/ : Répertoire utilisé par MLflow pour enregistrer les résultats de l'entraînement des modèles et les métriques associées.
 - mlartifacts/ : Contient les artefacts produits lors de l'entraînement des modèles, tels que les modèles entraînés et les visualisations.
-- results/ : Répertoire contenant les rapports et les résultats de l'évaluation du modèle, tels que les rapports sur le data drift et le target drift.
 - scoring_app/ : Une application web simple pour démontrer l'utilisation du modèle de scoring de crédit.
-- cours_et_exemples/ : Contient des ressources pédagogiques et des exemples utilisés pour développer le modèle.
+- cours_et_exemples/ : Contient des ressources pédagogiques et des exemples utilisés pour développer le modèle (dossier ignoré par github)
 - images_presentation/ : Images utilisées pour la présentation du projet.
 
 Les principaux fichiers sont :
 - eda.ipynb : Notebook Jupyter pour l'exploration des données.
 - modelisations.ipynb : Notebook Jupyter pour l'entraînement et l'évaluation des modèles.
 - data_drift.ipynb : Notebook Jupyter pour l'analyse du data drift.
-- README.md : Ce fichier README.
+- P7 - Note méthologique.pdf : Note méthodologique traitant du projet
 
-# Instructions pour l'Exécution
-Assurez-vous d'avoir Python et les dépendances requises installées. Vous pouvez les installer en exécutant pip install -r requirements.txt.
-Exécutez les notebooks Jupyter dans l'ordre approprié pour effectuer l'exploration des données, l'entraînement des modèles et l'évaluation.
-Utilisez MLflow pour suivre les métriques d'entraînement des modèles et enregistrer les artefacts associés.
-Consultez les rapports et les résultats générés dans les répertoires correspondants pour l'analyse supplémentaire.
+# Dashboard
+Lien vers le dashboard intéractif : https://lit-cove-87268-9b9a2d0fbdb8.herokuapp.com/
 
 ## Ressources intéressantes
 # ML Flow
@@ -53,5 +49,3 @@ Liste des fichiers pour déploiement heroku:
 - runtime.txt -> pour spécifier version de python utilisée dans heroku
 - requirements.txt -> pour spécifier librairies à installer et leurs versions
 - Procfile -> pour spécifier quelle app lancer et comment
-
-Lien vers le dashboard intéractif : https://lit-cove-87268-9b9a2d0fbdb8.herokuapp.com/

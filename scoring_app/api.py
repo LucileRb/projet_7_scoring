@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Importer modèle entrainé
-with open('utils/best_model.pkl', 'rb') as model_file:
+with open('../utils/best_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
 scaler = MinMaxScaler(feature_range = (0, 1))

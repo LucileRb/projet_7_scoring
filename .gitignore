@@ -1,7 +1,7 @@
 data/
-results/
-Scoring/
 catboost_info/
 mlruns/
 mlartifacts/
 cours_et_exemples/
+images_presentation/
+catboost_info/

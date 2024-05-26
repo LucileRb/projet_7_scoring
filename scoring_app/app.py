@@ -7,17 +7,34 @@ import pickle
 import os
 import shap
 import matplotlib.pyplot as plt
+import requests
+
+def get_prediction(data):
+    api_url = 'http://127.0.0.1:5000' # à remplacer par bonne url de l'api streamlit
+    test_data = {'test_data': data.drop(columns = ['SK_ID_CURR']).values.tolist()} # à modif
+    response = requests.post(api_url, json = test_data)
+
+    try:
+        result = response.json()
+        prediction_score = result['prediction'][0]
+
+        # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
+        if prediction_score > 0:
+            prediction_result = 'Credit accepted'
+        else:
+            prediction_result = 'Credit denied'
+
+        return prediction_result, prediction_score
+
+    except Exception as e:
+        st.error(f"Error getting prediction: {e}")
+        return None, None
 
 # Configuration de la page
 st.set_page_config(
     page_title = 'Scoring crédit',
     page_icon = 'scoring_app/app_illustrations/pret_a_depenser_logo.png',
-    layout = 'wide',
-    menu_items = {
-        'Get Help': 'https://www.extremelycoolapp.com/help',
-        'Report a bug': "https://www.extremelycoolapp.com/bug",
-        'About': "# This is a header. This is an *extremely* cool app!"
-        }
+    layout = 'wide'
     )
 
 # Définition des deux pages de l'application
@@ -99,9 +116,9 @@ elif app_mode == 'Prediction':
     single_sample = np.array(feature_list).reshape(1, -1)
 
     if st.button('Predict'):
-        # faire la prédiction en utilisant le modèle entrainé
-        loaded_model = pickle.load(open('best_model', 'rb'))
-        prediction = loaded_model['classification'].predict(single_sample)
+
+        # faire la prédiction en appelant l'api
+        prediction = get_prediction(single_sample)
 
         if prediction[0] == 0:
             # Prêt rejeté

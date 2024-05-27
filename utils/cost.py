@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pickle
 import os
-import packages.fonctions as fonctions
+from utils import fonctions
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import MinMaxScaler
 

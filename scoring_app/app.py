@@ -10,9 +10,11 @@ import matplotlib.pyplot as plt
 import requests
 
 def get_prediction(data):
-    api_url = 'https://lit-cove-87268-9b9a2d0fbdb8.herokuapp.com/' # à remplacer par bonne url de l'api streamlit
-    test_data = {'test_data': data.drop(columns = ['SK_ID_CURR']).values.tolist()} # à modif
-    response = requests.post(api_url, json = test_data)
+    api_url = 'http://127.0.0.1:5000' # à remplacer par bonne url de l'api streamlit
+    print(data)
+    response = requests.post(api_url, json = data)
+    print('réponse api')
+    print(response)
 
     try:
         result = response.json()
@@ -118,7 +120,8 @@ elif app_mode == 'Prediction':
     if st.button('Predict'):
 
         # faire la prédiction en appelant l'api
-        prediction = get_prediction(single_sample)
+        print(feature_list)
+        prediction = get_prediction(feature_list)
 
         if prediction[0] == 0:
             # Prêt rejeté
@@ -141,7 +144,7 @@ elif app_mode == 'Prediction':
         st.divider()
 
         # Afficher l'explication de la prédiction (waterfall plot)
-        explainer = pickle.load(open('explainer', 'rb'))
+        explainer = pickle.load(open('utils/explainer', 'rb'))
         shap_values = explainer(single_sample)
         st.header('Explication de la prédiction:')
         fig, ax = plt.subplots(figsize = (10, 5))

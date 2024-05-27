@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Importer modèle entrainé
-with open('../utils/best_model.pkl', 'rb') as model_file:
+with open('utils/best_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
 scaler = MinMaxScaler(feature_range = (0, 1))
@@ -22,14 +22,20 @@ def home_page():
 def predict():
     try:
         # récupérer les données
+        print('predict api')
         data = request.get_json(force = True)
+        print(data)
         test_data = np.array(data['test_data'])
+        print(test_data)
 
         # scaling des données
         scaled_data = scaler.transform(test_data)
+        print(scaled_data)
 
         # predict
+        print('prediction')
         prediction = model.predict(scaled_data)
+        print(prediction)
 
         return jsonify({'prediction': prediction.tolist()}) # return le résultat dans un dictionnaire - tolist car ne prend pas les np arrays
 

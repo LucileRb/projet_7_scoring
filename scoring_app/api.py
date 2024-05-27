@@ -11,7 +11,9 @@ app = Flask(__name__)
 with open('utils/best_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
-scaler = MinMaxScaler(feature_range = (0, 1))
+# Importer scaler entrainé
+with open('utils/scaler.pkl', 'rb') as scaler_file:
+    scaler = pickle.load(scaler_file)
 
 @app.route('/')
 def home_page():
@@ -27,6 +29,10 @@ def predict():
         print(data)
         test_data = np.array(data['test_data'])
         print(test_data)
+
+        # Vérifier les dimensions des données
+        if test_data.ndim != 2:
+            return jsonify({'error': 'Les données doivent être un tableau 2D'})
 
         # scaling des données
         scaled_data = scaler.transform(test_data)

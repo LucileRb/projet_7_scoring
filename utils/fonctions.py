@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import re
 from IPython.display import display
-from packages import cost
+from utils import cost
 
 import pickle
 import os

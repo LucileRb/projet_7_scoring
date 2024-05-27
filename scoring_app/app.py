@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import requests
 
 def get_prediction(data):
-    api_url = 'http://127.0.0.1:5000' # à remplacer par bonne url de l'api streamlit
+    api_url = 'https://lit-cove-87268-9b9a2d0fbdb8.herokuapp.com/' # à remplacer par bonne url de l'api streamlit
     print(data)
     response = requests.post(api_url, json = data)
     print('réponse api')

@@ -11,9 +11,10 @@ app = Flask(__name__)
 with open('utils/best_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
-# Importer scaler entrainé
-with open('utils/scaler.pkl', 'rb') as scaler_file:
-    scaler = pickle.load(scaler_file)
+# Importer scaler entrainé -> entraîné avec 175 features alors que là seulement 10
+#with open('utils/scaler.pkl', 'rb') as scaler_file:
+#    scaler = pickle.load(scaler_file)
+
 
 @app.route('/')
 def home_page():
@@ -26,22 +27,20 @@ def predict():
         # récupérer les données
         print('predict api')
         data = request.get_json(force = True)
-        print(data)
-        test_data = np.array(data['test_data'])
-        print(test_data)
-
-        # Vérifier les dimensions des données
-        if test_data.ndim != 2:
-            return jsonify({'error': 'Les données doivent être un tableau 2D'})
+        print(f'data: {data}')
+        test_data = np.array(data).reshape(1, -1)
+        print(f'test_data: {test_data}')
 
         # scaling des données
+        scaler = MinMaxScaler(feature_range = (0, 1))
+        scaler.fit(test_data)
         scaled_data = scaler.transform(test_data)
-        print(scaled_data)
+        print(f'scaled_data: {scaled_data}')
 
         # predict
-        print('prediction')
         prediction = model.predict(scaled_data)
-        print(prediction)
+        #prediction = model.predict_proba(scaled_data)[:, 0]
+        print(f'prediction: {prediction}')
 
         return jsonify({'prediction': prediction.tolist()}) # return le résultat dans un dictionnaire - tolist car ne prend pas les np arrays
 

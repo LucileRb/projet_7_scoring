@@ -18,15 +18,11 @@ def get_prediction(data):
 
     try:
         result = response.json()
+        print(result)
         prediction_score = result['prediction'][0]
+        print(f'prediction_score: {prediction_score}')
 
-        # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
-        if prediction_score > 0:
-            prediction_result = 'Credit accepted'
-        else:
-            prediction_result = 'Credit denied'
-
-        return prediction_result, prediction_score
+        return prediction_score
 
     except Exception as e:
         st.error(f"Error getting prediction: {e}")
@@ -122,8 +118,16 @@ elif app_mode == 'Prediction':
         # faire la prédiction en appelant l'api
         print(feature_list)
         prediction = get_prediction(feature_list)
+        print(f'prediction: {prediction}')
 
-        if prediction[0] == 0:
+                # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
+        #if prediction_score > 0:
+        #    prediction_result = 'Credit accepted'
+        #else:
+        #    prediction_result = 'Credit denied'
+
+        if prediction == 0:
+            print('pret rejeté')
             # Prêt rejeté
             file = open('scoring_app/app_illustrations/Loan-Rejection.jpg', 'rb')
             contents = file.read()
@@ -132,7 +136,8 @@ elif app_mode == 'Prediction':
             st.error('Selon notre prédiction, le prêt ne sera pas accordé')
             st.markdown(f'<img src="data:image/gif;base64, {data_url_no}" alt="cat gif">', unsafe_allow_html = True)
 
-        elif prediction[0] == 1:
+        elif prediction == 1:
+            print('pret accepte')
             # Prêt accepté
             file_ = open('scoring_app/app_illustrations/bank-loan-successfully-illustration-concept-white-background_701961-3161.avif', "rb")
             contents = file_.read()

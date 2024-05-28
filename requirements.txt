@@ -10,3 +10,5 @@ imblearn
 scikit-learn==1.2.2
 Flask
 gunicorn
+pytest
+pytest-flask

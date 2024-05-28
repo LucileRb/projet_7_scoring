@@ -50,3 +50,9 @@ Liste des fichiers pour déploiement heroku:
 - runtime.txt -> pour spécifier version de python utilisée dans heroku
 - requirements.txt -> pour spécifier librairies à installer et leurs versions
 - Procfile -> pour spécifier quelle app lancer et comment
+
+
+
+
+web: sh scoring_app/setup.sh && streamlit run scoring_app/app.py
+api: python scoring_app/api.py

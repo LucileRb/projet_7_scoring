@@ -12,10 +12,7 @@ app = Flask(__name__)
 with open('utils/best_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
-# Importer scaler entrainé -> entraîné avec 175 features alors que là seulement 10
-#with open('utils/scaler.pkl', 'rb') as scaler_file:
-#    scaler = pickle.load(scaler_file)
-
+# ne pas importer scaler entrainé car entraîné avec 175 features alors que là seulement 10
 
 @app.route('/')
 def home_page():
@@ -26,22 +23,16 @@ def home_page():
 def predict():
     try:
         # récupérer les données
-        print('predict api')
         data = request.get_json(force = True)
-        print(f'data: {data}')
         test_data = np.array(data).reshape(1, -1)
-        print(f'test_data: {test_data}')
 
         # scaling des données
         scaler = MinMaxScaler(feature_range = (0, 1))
         scaler.fit(test_data)
         scaled_data = scaler.transform(test_data)
-        print(f'scaled_data: {scaled_data}')
 
         # predict
-        #prediction = model.predict(scaled_data)
         prediction = model.predict_proba(scaled_data)[:, 1]
-        print(f'prediction: {prediction}')
 
         return jsonify({'prediction': prediction.tolist()}) # return le résultat dans un dictionnaire - tolist car ne prend pas les np arrays
 
@@ -49,5 +40,4 @@ def predict():
         return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host = '0.0.0.0', port = port)
+    app.run(debug = True)

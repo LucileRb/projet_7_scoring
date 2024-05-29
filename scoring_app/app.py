@@ -17,14 +17,10 @@ import json
 
 def get_prediction(data):
     api_url = 'https://scoring-credit-implementation-a56784ea5721.herokuapp.com/Prediction' # url de l'api sur heroku
-    print(data)
     response = requests.post(api_url, json = data)
-    print('réponse api')
-    print(response)
 
     try:
         result = response.json()
-        print(result)
         prediction_score = result['prediction'][0]
 
         # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
@@ -36,8 +32,7 @@ def get_prediction(data):
         return prediction_result, prediction_score
 
     except Exception as e:
-        st.error(f"Error getting prediction: {e}")
-        return None, None
+        st.error(f"Error getting prediction: {str(e)}")
 
 
 def credit_score_gauge(score):

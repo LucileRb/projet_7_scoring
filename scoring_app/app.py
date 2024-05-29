@@ -18,6 +18,7 @@ import json
 def get_prediction(data):
     api_url = 'https://scoring-credit-implementation-a56784ea5721.herokuapp.com/Prediction' # url de l'api sur heroku
     response = requests.post(api_url, json = data)
+    st.text(f'data: {data}')
     st.text(f'reponse: {response}')
     try:
         result = response.json()
@@ -336,12 +337,11 @@ elif app_mode == 'New prediction':
         ]
 
     single_sample = np.array(feature_list).reshape(1, -1)
-    json_data = json.dumps(single_sample.tolist())
 
     if st.button('Predict'):
 
         # faire la prédiction en appelant l'api
-        prediction_result, prediction_score = get_prediction(json_data)
+        prediction_result, prediction_score = get_prediction(single_sample)
         print(f'prediction: {prediction_score}')
 
         # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5

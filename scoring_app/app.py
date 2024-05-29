@@ -11,6 +11,7 @@ import matplotlib.colors as mcolors
 import seaborn as sns
 import requests
 import pyarrow.parquet as pq
+import json
 
 ################################################ FONCTIONS ################################################
 
@@ -234,11 +235,12 @@ elif app_mode == 'Vue client':
     st.sidebar.write(selected_client_data)
 
     single_sample = np.array(selected_client_data).reshape(1, -1)
+    json_data = json.dumps(single_sample.tolist())
 
     # Button to trigger prediction in the sidebar
     if st.sidebar.button('Predict'):
         # Make API request and get prediction
-        prediction_result, prediction_score = get_prediction(single_sample)
+        prediction_result, prediction_score = get_prediction(json_data)
 
         # Display prediction result
         st.sidebar.subheader('Prediction Result:')

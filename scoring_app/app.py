@@ -219,7 +219,7 @@ elif app_mode == 'Vue client':
     st.sidebar.write(selected_client_data)
 
     # Button to trigger prediction in the sidebar
-    if st.sidebar.button('Predict') or st.session_state['btn_clicked']:
+    if st.sidebar.button('Predict'):
         # Make API request and get prediction
         prediction_result, prediction_score = get_prediction(selected_client_data)
 
@@ -258,7 +258,7 @@ elif app_mode == 'Vue client':
             st.subheader('Bi-variate Analysis:')
             # Select two features for bivariate analysis
             selected_feature1 = st.selectbox('Select Feature 1:', df.drop(columns = ['SK_ID_CURR']).columns, key = 'feature_selection1')
-            selected_feature2 = st.selectbox('Select Feature 2:',df.drop(columns = ['SK_ID_CURR']).columns, key = 'feature_selection2')
+            selected_feature2 = st.selectbox('Select Feature 2:', df.drop(columns = ['SK_ID_CURR']).columns, key = 'feature_selection2')
 
             # Display bivariate analysis
             bivariate_analysis(selected_feature1, selected_feature2)
@@ -299,7 +299,7 @@ elif app_mode == 'Vue client':
         client_data_updates[col] = new_value
 
     # Button to trigger prediction with updated information
-    if st.sidebar.button('Update and Re-predict') or st.session_state['btn_clicked2']:
+    if st.sidebar.button('Update and Re-predict'):
         # Update client data
         for col, new_value in client_data_updates.items():
             selected_client_data.loc[:, col] = new_value

@@ -215,7 +215,7 @@ elif app_mode == 'Vue client':
 
     # Display selected client's data in the main section
     st.sidebar.header('Selected Client Data:')
-    selected_client_data = df.loc[df['SK_ID_CURR'] == selected_client_id]
+    selected_client_data = df.loc[df.index == selected_client_id]
     st.sidebar.write(selected_client_data)
 
     # Button to trigger prediction in the sidebar

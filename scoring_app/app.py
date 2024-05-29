@@ -16,7 +16,7 @@ import json
 ################################################ FONCTIONS ################################################
 
 def get_prediction(data):
-    api_url = 'https://scoring-credit-implementation-a56784ea5721.herokuapp.com/Prediction' # url de l'api sur heroku
+    api_url = 'http://127.0.0.1:5000/Prediction' # url de l'api sur heroku
     response = requests.post(api_url, json = data)
 
     try:

@@ -1,1 +1,1 @@
-web: python scoring_app/api.py
+web: gunicorn scoring_app.api:app

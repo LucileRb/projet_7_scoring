@@ -12,7 +12,10 @@ app = Flask(__name__)
 with open('utils/best_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
-# ne pas importer scaler entrainé car entraîné avec 175 features alors que là seulement 10
+# Importer scaler entrainé -> entraîné avec 175 features alors que là seulement 10
+#with open('utils/scaler.pkl', 'rb') as scaler_file:
+#    scaler = pickle.load(scaler_file)
+
 
 @app.route('/')
 def home_page():
@@ -40,4 +43,5 @@ def predict():
         return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host = '0.0.0.0', port = port)

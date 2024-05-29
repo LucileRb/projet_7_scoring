@@ -39,8 +39,8 @@ def predict():
         print(f'scaled_data: {scaled_data}')
 
         # predict
-        prediction = model.predict(scaled_data)
-        #prediction = model.predict_proba(scaled_data)[:, 0]
+        #prediction = model.predict(scaled_data)
+        prediction = model.predict_proba(scaled_data)[:, 1]
         print(f'prediction: {prediction}')
 
         return jsonify({'prediction': prediction.tolist()}) # return le résultat dans un dictionnaire - tolist car ne prend pas les np arrays

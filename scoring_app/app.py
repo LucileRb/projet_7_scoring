@@ -283,92 +283,6 @@ elif app_mode == 'Vue client':
             bivariate_analysis(selected_feature1, selected_feature2)
             st.text("A graphical analysis of the relationship between two selected features for the same target as the client.")
 
-    # Allow user to modify client information
-    st.sidebar.subheader('Modify Client Information:')
-
-    # Get columns to modify
-    columns_to_modify = st.sidebar.multiselect('Select columns to modify:', selected_client_data.columns)
-
-    # Dictionary to store updates
-    client_data_updates = {}
-
-    # Loop through selected columns
-    for col in columns_to_modify:
-        new_value = st.sidebar.text_input(f'Enter new value for {col}:', value = selected_client_data[col].iloc[0])
-
-        # Check entered values
-        if selected_client_data[col].dtype == 'int64':  # If the column is categorical
-            new_value = int(new_value)
-            unique_values = df_train[col].unique()
-            if new_value not in unique_values:
-                st.warning(f"The value must be among: {', '.join(map(str, unique_values))}")
-                continue
-        else:  # If the column is numerical
-            min_value = df_train[col].min()
-            max_value = df_train[col].max()
-            try:
-                new_value = float(new_value)
-                if new_value < min_value or new_value > max_value:
-                    st.warning(f"The value must be between {min_value} and {max_value}")
-                    continue
-            except ValueError:
-                st.warning("The value must be a valid number for a continuous variable.")
-                continue
-
-        client_data_updates[col] = new_value
-
-    # Button to trigger prediction with updated information
-    if st.sidebar.button('Update and Re-predict'):
-        # Update client data
-        for col, new_value in client_data_updates.items():
-            selected_client_data.loc[:, col] = new_value
-
-        # Make API request and get updated prediction
-        prediction_result, prediction_score = get_prediction(selected_client_data)
-
-        # Display updated prediction result
-        st.sidebar.subheader('Updated Prediction Result:')
-        # Display prediction result for new client
-        if prediction_result is not None:
-            # Determine emoji based on prediction result
-            emoji = "❌" if prediction_result == "Credit denied" else "✅"
-
-            # Display prediction result with emoji
-            st.sidebar.write(f"{emoji} The credit is accepted if the score is greater than 0.5 or 50%, denied otherwise. In this case, the predicted score is {prediction_score:.2}")
-
-            st.sidebar.write(f"{emoji} The credit status is: {prediction_result}")
-            st.sidebar.write(f"{emoji} The prediction score is: {prediction_score:.2%}")
-            st.sidebar.write(f"{emoji} The probability is: {prediction_score:.2}")
-
-
-            # Visualisation du score de crédit (jauge colorée)
-            st.subheader('Credit Score Visualization:')
-            credit_score_gauge(prediction_score)
-            st.text("A color gauge representing the credit score. The client's score is indicated by a marker on the gauge.")
-
-            # Visualisation de la contribution des features
-            st.subheader('Feature Contribution:')
-            visualize_shap_values(selected_client_data)
-            st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")
-
-            st.subheader('Client features visualization:')
-            # Dropdown for feature selection
-            selected_feature = st.selectbox('Select Feature:', df.drop(columns = ['SK_ID_CURR']).columns, key = 'feature_selection_mod')
-            st.text("A graphical representation of the client's position among others based on the selected feature for the same target as the client.")
-
-            # Display client features visualization
-            visualize_client_features(selected_client_data, selected_feature)
-
-            # Graphique d’analyse bi-variée entre deux features sélectionnées
-            st.subheader('Bi-variate Analysis:')
-            # Select two features for bivariate analysis
-            selected_feature1 = st.selectbox('Select Feature 1:', df.drop(columns = ['SK_ID_CURR']).columns, key = 'feature_selection1_mod')
-            selected_feature2 = st.selectbox('Select Feature 2:',df.drop(columns = ['SK_ID_CURR']).columns, key = 'feature_selection2_mod')
-
-            # Display bivariate analysis
-            bivariate_analysis(selected_feature1, selected_feature2)
-            st.text("A graphical analysis of the relationship between two selected features for the same target as the client.")
-
 
 elif app_mode == 'New prediction':
     st.image('scoring_app/app_illustrations/multi-currency-iban.jpg', width = 800)
@@ -420,12 +334,13 @@ elif app_mode == 'New prediction':
         ]
 
     single_sample = np.array(feature_list).reshape(1, -1)
+    json_data = json.dumps(single_sample.tolist())
 
     if st.button('Predict'):
 
         # faire la prédiction en appelant l'api
         print(feature_list)
-        prediction_score = get_prediction(single_sample)
+        prediction_score = get_prediction(json_data)
         print(f'prediction: {prediction_score}')
 
         # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5

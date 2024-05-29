@@ -211,7 +211,6 @@ if app_mode == 'Home':
 
 elif app_mode == 'Vue client':
     # Dropdown for client IDs in the sidebar
-    #selected_client_id = st.sidebar.selectbox('Select Client ID:', df['SK_ID_CURR'].unique())
     selected_client_id = st.sidebar.selectbox('Select Client ID:', df.index.tolist())
 
     # Display selected client's data in the main section

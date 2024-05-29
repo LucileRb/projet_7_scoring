@@ -18,11 +18,11 @@ import json
 def get_prediction(data):
     api_url = 'https://scoring-credit-implementation-a56784ea5721.herokuapp.com/Prediction' # url de l'api sur heroku
     response = requests.post(api_url, json = data)
-
+    st.text(f'Prediction: {prediction_score}')
     try:
         result = response.json()
         prediction_score = result['prediction'][0]
-        st.text(f'Prediction: {prediction_score}')
+        
 
         # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
         if prediction_score > 0.55:

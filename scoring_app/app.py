@@ -237,13 +237,12 @@ elif app_mode == 'Vue client':
     selected_client_data = df[features].loc[df.index == selected_client_id]
     st.sidebar.write(selected_client_data)
 
-    single_sample = np.array(selected_client_data).reshape(1, -1)
-    json_data = json.dumps(single_sample.tolist())
+    single_sample = np.array(selected_client_data).reshape(1, -1).tolist()
 
     # Button to trigger prediction in the sidebar
     if st.sidebar.button('Predict'):
         # Make API request and get prediction
-        prediction_result, prediction_score = get_prediction(json_data)
+        prediction_result, prediction_score = get_prediction(single_sample)
 
         # Display prediction result
         st.sidebar.subheader('Prediction Result:')

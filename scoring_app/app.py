@@ -26,9 +26,14 @@ def get_prediction(data):
         result = response.json()
         print(result)
         prediction_score = result['prediction'][0]
-        print(f'prediction_score: {prediction_score}')
 
-        return prediction_score
+        # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
+        if prediction_score > 0.55:
+            prediction_result = 'Credit accepted'
+        else:
+            prediction_result = 'Credit denied'
+
+        return prediction_result, prediction_score
 
     except Exception as e:
         st.error(f"Error getting prediction: {e}")
@@ -53,7 +58,7 @@ def credit_score_gauge(score):
 
     # Draw color gradient as colorbar
     gradient = np.linspace(0, 1, 256).reshape(1, -1)
-    ax.imshow(gradient, aspect = 'auto', cmap=cmap, extent = [0, 1, 0, 0.5])
+    ax.imshow(gradient, aspect = 'auto', cmap = cmap, extent = [0, 1, 0, 0.5])
 
     # Draw tick marks and labels
     for i, threshold in enumerate(thresholds):
@@ -339,14 +344,13 @@ elif app_mode == 'New prediction':
     if st.button('Predict'):
 
         # faire la prédiction en appelant l'api
-        print(feature_list)
-        prediction_score = get_prediction(json_data)
+        prediction_result, prediction_score = get_prediction(json_data)
         print(f'prediction: {prediction_score}')
 
         # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
-        if prediction_score > 0.55:
-            prediction_result = 'Credit accepted'
+        if prediction_result == 'Credit accepted':
             # Prêt accepté
+            print('pret accepté')
             file_ = open('scoring_app/app_illustrations/bank-loan-successfully-illustration-concept-white-background_701961-3161.avif', "rb")
             contents = file_.read()
             data_url = base64.b64encode(contents).decode('utf-8')
@@ -354,7 +358,6 @@ elif app_mode == 'New prediction':
             st.success('Selon notre prédiction, le prêt sera accordé')
             st.markdown(f'<img src="data:image/gif;base64, {data_url}" alt="cat gif">', unsafe_allow_html = True)
         else:
-            prediction_result = 'Credit denied'
             print('pret rejeté')
             # Prêt rejeté
             file = open('scoring_app/app_illustrations/Loan-Rejection.jpg', 'rb')

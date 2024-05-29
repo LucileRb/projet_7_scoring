@@ -22,6 +22,7 @@ def get_prediction(data):
     try:
         result = response.json()
         prediction_score = result['prediction'][0]
+        st.text(f'Prediction: {prediction_score}')
 
         # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
         if prediction_score > 0.55:

@@ -2,7 +2,7 @@
 import numpy as np
 import pickle
 import os
-from sklearn.preprocessing import MinMaxScaler
+
 from flask import Flask, request, jsonify
 
 # Créer une application Flask

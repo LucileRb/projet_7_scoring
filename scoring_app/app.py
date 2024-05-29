@@ -336,7 +336,7 @@ elif app_mode == 'New prediction':
         childrennumber
         ]
 
-    single_sample = np.array(feature_list).reshape(1, -1)
+    single_sample = np.array(feature_list).reshape(1, -1).tolist()
 
     if st.button('Predict'):
 

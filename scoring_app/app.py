@@ -218,10 +218,12 @@ elif app_mode == 'Vue client':
     selected_client_data = df.loc[df.index == selected_client_id]
     st.sidebar.write(selected_client_data)
 
+    single_sample = np.array(selected_client_data).reshape(1, -1)
+
     # Button to trigger prediction in the sidebar
     if st.sidebar.button('Predict'):
         # Make API request and get prediction
-        prediction_result, prediction_score = get_prediction(selected_client_data)
+        prediction_result, prediction_score = get_prediction(single_sample)
 
         # Display prediction result
         st.sidebar.subheader('Prediction Result:')
@@ -406,7 +408,7 @@ elif app_mode == 'New prediction':
 
         # faire la prédiction en appelant l'api
         print(feature_list)
-        prediction_score = get_prediction(feature_list)
+        prediction_score = get_prediction(single_sample)
         print(f'prediction: {prediction_score}')
 
         # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5

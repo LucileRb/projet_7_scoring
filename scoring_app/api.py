@@ -12,6 +12,10 @@ app = Flask(__name__)
 with open('utils/best_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
+# import scaler
+with open('utils/scaler.pkl', 'rb') as scaler_train:
+    scaler = pickle.load(scaler_train)
+
 
 @app.route('/')
 def home_page():
@@ -26,8 +30,6 @@ def predict():
         test_data = np.array(data).reshape(1, -1)
 
         # scaling des données
-        scaler = MinMaxScaler(feature_range = (0, 1))
-        scaler.fit(test_data)
         scaled_data = scaler.transform(test_data)
 
         # predict

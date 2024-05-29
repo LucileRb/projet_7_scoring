@@ -170,6 +170,21 @@ with open('utils/scaler.pkl', 'rb') as scaler_file:
 
 explainer = pickle.load(open('utils/explainer', 'rb'))
 
+
+features = [
+    'CNT_CHILDREN',
+    'OBS_30_CNT_SOCIAL_CIRCLE',
+    'NONLIVINGAREA_MODE',
+    'EXT_SOURCE_3',
+    'DEF_30_CNT_SOCIAL_CIRCLE',
+    'AMT_REQ_CREDIT_BUREAU_QRT',
+    'PREVIOUS_LOANS_COUNT',
+    'AMT_REQ_CREDIT_BUREAU_YEAR',
+    'OBS_60_CNT_SOCIAL_CIRCLE',
+    'CNT_FAM_MEMBERS'
+    ]
+
+
 ################################################ DASHBOARD ################################################
 
 
@@ -215,7 +230,7 @@ elif app_mode == 'Vue client':
 
     # Display selected client's data in the main section
     st.sidebar.header('Selected Client Data:')
-    selected_client_data = df.loc[df.index == selected_client_id]
+    selected_client_data = df[features].loc[df.index == selected_client_id]
     st.sidebar.write(selected_client_data)
 
     single_sample = np.array(selected_client_data).reshape(1, -1)

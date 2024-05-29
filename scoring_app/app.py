@@ -159,16 +159,16 @@ def visualize_shap_values(selected_client_data):
 
 
 # Load sample parquet data
-parquet_file = '../utils/X_test_SS.parquet'
+parquet_file = 'utils/X_test_SS.parquet'
 df = pq.read_table(parquet_file).to_pandas().reset_index(drop = True)
 
-parquet_file_train = '../utils/X_train_SS.parquet'
+parquet_file_train = 'utils/X_train_SS.parquet'
 df_train = pq.read_table(parquet_file_train).to_pandas().reset_index(drop = True)
 
-with open('../utils/scaler.pkl', 'rb') as scaler_file:
+with open('utils/scaler.pkl', 'rb') as scaler_file:
     scaler = pickle.load(scaler_file)
 
-explainer = pickle.load(open('../utils/explainer', 'rb'))
+explainer = pickle.load(open('utils/explainer', 'rb'))
 
 ################################################ DASHBOARD ################################################
 

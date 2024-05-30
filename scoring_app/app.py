@@ -338,15 +338,18 @@ elif app_mode == 'New prediction':
                 st.error('Selon notre prédiction, le prêt ne sera pas accordé')
                 st.markdown(f'<img src="data:image/gif;base64, {data_url_no}" alt="cat gif">', unsafe_allow_html = True)
 
+            st.divider()
+
             emoji = "❌" if prediction_result == "Credit denied" else "✅"
 
             # Display prediction result with emoji
+            st.subheader('Explication du résultat:')
             st.write(f"{emoji} The credit is accepted if the score is greater than 0.55 or 55%, denied otherwise. In this case, the predicted score is {prediction_score:.2}")
-
             st.write(f"{emoji} The credit status is: {prediction_result}")
             st.write(f"{emoji} The prediction score is: {prediction_score:.2%}")
             st.write(f"{emoji} The probability is: {prediction_score:.2}")
 
+            st.divider()
 
             # Visualisation du score de crédit (jauge colorée)
             st.subheader('Credit Score Visualization:')

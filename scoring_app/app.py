@@ -76,6 +76,7 @@ def credit_score_gauge(score):
 
 # Function to visualize client features
 def visualize_client_features(selected_client_data, selected_feature, prediction_result):
+
     # Display position of client among others
     client_value = selected_client_data[selected_feature].values[0]
     st.text(f'Client {selected_feature}: {client_value:.2f}')
@@ -88,13 +89,13 @@ def visualize_client_features(selected_client_data, selected_feature, prediction
     elif prediction_result == 'Credit accepted':
         prediction_target = 1
 
-    # Filter DataFrame based on prediction result
+    # Filter données sur catégories du client (pour le comparer avec les clients ayant les mêmes résultats de prédiction)
     filtered_df = df_train[df_train['TARGET'] == prediction_target]
 
     # Check if the selected feature is categorical or continuous
     if df_train[selected_feature].dtype == 'int64':  # Categorical feature
         sns.countplot(data = filtered_df, x = selected_feature, ax = ax)
-        ax.axvline(x=np.where(filtered_df[selected_feature].unique() == client_value)[0][0], color = 'red', linestyle = '--', label = f'Client {selected_feature}')
+        ax.axvline(x = np.where(filtered_df[selected_feature].unique() == client_value)[0][0], color = 'red', linestyle = '--', label = f'Client {selected_feature}')
         ax.set_title(f'Client Position in {selected_feature} Distribution')
         ax.set_xlabel(selected_feature)
         ax.set_ylabel('Count')
@@ -110,7 +111,7 @@ def visualize_client_features(selected_client_data, selected_feature, prediction
     st.pyplot(fig, clear_figure = True)
 
 # Function to visualize SHAP values for the selected client
-def visualize_shap_values(selected_client_data, prediction_score):
+def visualize_shap_values(selected_client_data):
     st.write("Features that contribute the most to the score globally")
 
     # Waterfall plot
@@ -240,7 +241,7 @@ elif app_mode == 'Client ID':
 
             # Visualisation de la contribution des features
             st.subheader('Feature Contribution:')
-            visualize_shap_values(single_sample, prediction_score)
+            visualize_shap_values(single_sample)
             st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")
 
             # Dropdown pour sélectionner la feature qu'on veut visualiser
@@ -360,7 +361,7 @@ elif app_mode == 'New prediction':
 
             # Visualisation de la contribution des features (SHAP - waterfall plot)
             st.subheader('Feature Contribution:')
-            visualize_shap_values(single_sample, prediction_score)
+            visualize_shap_values(single_sample)
             st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")
 
 

@@ -125,8 +125,8 @@ def visualize_shap_values(selected_client_data, prediction_score):
 
 
 # Load sample parquet data
-#parquet_file = 'utils/X_test_SS.parquet'
-#df = pq.read_table(parquet_file).to_pandas().reset_index(drop = True)
+parquet_file = '../utils/X_test_SS.parquet'
+df = pq.read_table(parquet_file).to_pandas().reset_index(drop = True)
 
 parquet_file_xtrain = 'utils/X_train_SS.parquet'
 df_x_train = pq.read_table(parquet_file_xtrain).to_pandas().reset_index(drop = True)

@@ -41,10 +41,10 @@ def get_prediction(data):
 def credit_score_gauge(score):
     # Color gradient from red to yellow to green
     colors = ['#FF0000', '#FFFF00', '#00FF00']  # Red, Yellow, Green
-    thresholds = [0, 0.5, 1]
+    thresholds = [0, 0.55, 1]
 
     # Interpolate color based on score
-    cmap = mcolors.LinearSegmentedColormap.from_list("custom", list(zip(thresholds, colors)))
+    cmap = mcolors.LinearSegmentedColormap.from_list('custom', list(zip(thresholds, colors)))
     norm = mcolors.Normalize(vmin = 0, vmax = 1)
     #color = cmap(norm(score))
 
@@ -63,8 +63,8 @@ def credit_score_gauge(score):
         ax.plot([threshold, threshold], [0.45, 0.5], color = 'black')
         ax.text(threshold, 0.55, str(threshold), fontsize = 12, ha = 'center', va = 'bottom', color = 'black')
 
-    # Draw dotted line at 0.5 threshold with legend
-    ax.plot([0.5, 0.5], [0, 0.5], linestyle = '--', color = 'black', label = 'Threshold')
+    # Draw dotted line at 0.55 threshold with legend
+    ax.plot([0.55, 0.55], [0, 0.55], linestyle = '--', color = 'black', label = 'Threshold')
     # Draw prediction indicator with legend
     ax.plot([score, score], [0, 0.5], color = 'black', linewidth = 2, label = 'Client score')
     # Draw score below with the same color as the prediction indicator
@@ -133,7 +133,7 @@ def bivariate_analysis(feature1, feature2):
 
     st.pyplot(fig, clear_figure = True)
 
-# Function to visualize SHAP values for the selected client
+# Function to visualize SHAP values for the selected client - MARCHE PAS
 def visualize_shap_values(selected_client_data):
     st.write("Features that contribute the most to the score globally")
     # Plot global contribution
@@ -142,20 +142,25 @@ def visualize_shap_values(selected_client_data):
     #shap.plots.bar(shap_values, show=False, max_display=10)
     #plt.title('Global SHAP Values Analysis')
     #st.pyplot(fig)
+    shap_values = explainer(single_sample)
+    st.header('Explication de la prédiction:')
+    fig, ax = plt.subplots(figsize = (10, 5))
+    shap.waterfall_plot(shap_values[0])
+    st.pyplot(fig)
 
     # Chemin vers votre image localement
-    chemin_image = "utils/global_score.png"
+    #chemin_image = "utils/global_score.png"
     # Afficher l'image
-    st.image(chemin_image, caption = '', use_column_width = True)
+    #st.image(chemin_image, caption = '', use_column_width = True)
 
     # Plot local contribution
-    st.write("Features that contribute the most to the score for the selected client")
-    fig, ax = plt.subplots()
-    plt.sca(ax)
-    shap_values_client = explainer(scaler.transform(selected_client_data.drop(columns = ['SK_ID_CURR'])), max_evals = 1000)
+    #st.write("Features that contribute the most to the score for the selected client")
+    #fig, ax = plt.subplots()
+    #plt.sca(ax)
+    #shap_values_client = explainer(scaler.transform(selected_client_data.drop(columns = ['SK_ID_CURR'])), max_evals = 1000)
     # Plot local contribution
-    force_plot_img = shap.plots.force(shap_values_client, matplotlib = True, show = False, contribution_threshold = 0.07, feature_names = selected_client_data.drop(columns = ['SK_ID_CURR']).columns)
-    st.pyplot(force_plot_img, clear_figure = True)
+    #force_plot_img = shap.plots.force(shap_values_client, matplotlib = True, show = False, contribution_threshold = 0.07, feature_names = selected_client_data.drop(columns = ['SK_ID_CURR']).columns)
+    #st.pyplot(force_plot_img, clear_figure = True)
 
 
 
@@ -265,7 +270,7 @@ elif app_mode == 'Vue client':
 
             # Visualisation de la contribution des features
             st.subheader('Feature Contribution:')
-            visualize_shap_values(selected_client_data)
+            visualize_shap_values(single_sample)
             st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")
 
             # Dropdown for feature selection

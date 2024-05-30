@@ -134,7 +134,7 @@ def bivariate_analysis(feature1, feature2):
     st.pyplot(fig, clear_figure = True)
 
 # Function to visualize SHAP values for the selected client - MARCHE PAS
-def visualize_shap_values(selected_client_data):
+def visualize_shap_values(selected_client_data, prediction_score):
     st.write("Features that contribute the most to the score globally")
     # Plot global contribution
     #fig, ax = plt.subplots()
@@ -161,6 +161,10 @@ def visualize_shap_values(selected_client_data):
     # Plot local contribution
     #force_plot_img = shap.plots.force(shap_values_client, matplotlib = True, show = False, contribution_threshold = 0.07, feature_names = selected_client_data.drop(columns = ['SK_ID_CURR']).columns)
     #st.pyplot(force_plot_img, clear_figure = True)
+    fig, ax = plt.subplots(figsize = (10, 5))
+    shap.force_plot(prediction_score, shap_values.values[0], single_sample, feature_names = features)
+    st.pyplot(fig)
+
 
 
 
@@ -270,11 +274,11 @@ elif app_mode == 'Vue client':
 
             # Visualisation de la contribution des features
             st.subheader('Feature Contribution:')
-            visualize_shap_values(single_sample)
+            visualize_shap_values(single_sample, prediction_score)
             st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")
 
             # Dropdown for feature selection
-            selected_feature = st.selectbox('Select Feature:', df.drop(columns = ['SK_ID_CURR']).columns, key = 'feature_selection')
+            selected_feature = st.selectbox('Select Feature:', df.columns, key = 'feature_selection')
             st.text("A graphical representation of the client's position among others based on the selected feature for the same target as the client.")
 
             # Display client features visualization
@@ -283,8 +287,8 @@ elif app_mode == 'Vue client':
             # Graphique d’analyse bi-variée entre deux features sélectionnées
             st.subheader('Bi-variate Analysis:')
             # Select two features for bivariate analysis
-            selected_feature1 = st.selectbox('Select Feature 1:', df.drop(columns = ['SK_ID_CURR']).columns, key = 'feature_selection1')
-            selected_feature2 = st.selectbox('Select Feature 2:', df.drop(columns = ['SK_ID_CURR']).columns, key = 'feature_selection2')
+            selected_feature1 = st.selectbox('Select Feature 1:', df.columns, key = 'feature_selection1')
+            selected_feature2 = st.selectbox('Select Feature 2:', df.columns, key = 'feature_selection2')
 
             # Display bivariate analysis
             bivariate_analysis(selected_feature1, selected_feature2)

@@ -198,6 +198,8 @@ if app_mode == 'Home':
 
 
 elif app_mode == 'Client ID':
+    st.title('FICHE CLIENT')
+    st.divider()
     # Dropdown for client IDs in the sidebar
     selected_client_id = st.sidebar.selectbox('Select Client ID:', df.index.tolist())
 
@@ -209,6 +211,7 @@ elif app_mode == 'Client ID':
     if st.sidebar.button('Predict'):
         st.header('ID client sélectionné')
         st.write(selected_client_id)
+        st.divider()
 
         st.subheader('Données du client:')
         st.write(selected_client_data)
@@ -251,11 +254,15 @@ elif app_mode == 'Client ID':
 
 elif app_mode == 'New prediction':
     st.image('scoring_app/app_illustrations/multi-currency-iban.jpg', width = 800)
+
+    st.title('OUTILS DE PREDICTION')
+    st.divider()
     phrase = '''
     Bonjour,
     merci de remplir les informations suivantes à propos du client afin de déterminer si nous devons acceder à sa demande de prêt
     '''
     st.subheader(phrase)
+    st.divider()
 
     st.sidebar.header('Informations à propos du client:')
 

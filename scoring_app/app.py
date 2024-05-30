@@ -61,7 +61,7 @@ def credit_score_gauge(score):
     # Draw tick marks and labels
     for i, threshold in enumerate(thresholds):
         ax.plot([threshold, threshold], [0.45, 0.5], color = 'black')
-        ax.text(threshold, 0.55, str(threshold), fontsize = 12, ha = 'center', va = 'bottom', color = 'black')
+        ax.text(threshold, 0.55, str(threshold), fontsize = 8, ha = 'center', va = 'bottom', color = 'black')
 
     # Draw dotted line at 0.55 threshold with legend
     ax.plot([0.55, 0.55], [0, 0.55], linestyle = '--', color = 'black', label = 'Threshold')
@@ -75,7 +75,7 @@ def credit_score_gauge(score):
     st.pyplot(fig, clear_figure = True)
 
 # Function to visualize client features
-def visualize_client_features(selected_client_data, selected_feature):
+def visualize_client_features(selected_client_data, selected_feature, prediction_result):
     # Display position of client among others
     client_value = selected_client_data[selected_feature].values[0]
     st.text(f'Client {selected_feature}: {client_value:.2f}')
@@ -83,8 +83,13 @@ def visualize_client_features(selected_client_data, selected_feature):
     # Plot client position in distribution
     fig, ax = plt.subplots()
 
+    if prediction_result == 'Credit denied':
+        prediction_target = 0
+    elif prediction_result == 'Credit accepted':
+        prediction_target = 1
+
     # Filter DataFrame based on prediction result
-    filtered_df = df_train[df_train['TARGET'] == int(prediction_result == 'Credit denied')]
+    filtered_df = df_train[df_train['TARGET'] == prediction_target]
 
     # Check if the selected feature is categorical or continuous
     if df_train[selected_feature].dtype == 'int64':  # Categorical feature
@@ -133,37 +138,21 @@ def bivariate_analysis(feature1, feature2):
 
     st.pyplot(fig, clear_figure = True)
 
-# Function to visualize SHAP values for the selected client - MARCHE PAS
+# Function to visualize SHAP values for the selected client
 def visualize_shap_values(selected_client_data, prediction_score):
     st.write("Features that contribute the most to the score globally")
-    # Plot global contribution
-    #fig, ax = plt.subplots()
-    #plt.sca(ax)
-    #shap.plots.bar(shap_values, show=False, max_display=10)
-    #plt.title('Global SHAP Values Analysis')
-    #st.pyplot(fig)
-    shap_values = explainer(single_sample)
+
+    # Waterfall plot
+    shap_values = explainer(selected_client_data)
     st.header('Explication de la prédiction:')
     fig, ax = plt.subplots(figsize = (10, 5))
     shap.waterfall_plot(shap_values[0])
     st.pyplot(fig)
 
-    # Chemin vers votre image localement
-    #chemin_image = "utils/global_score.png"
-    # Afficher l'image
-    #st.image(chemin_image, caption = '', use_column_width = True)
-
-    # Plot local contribution
-    #st.write("Features that contribute the most to the score for the selected client")
-    #fig, ax = plt.subplots()
-    #plt.sca(ax)
-    #shap_values_client = explainer(scaler.transform(selected_client_data.drop(columns = ['SK_ID_CURR'])), max_evals = 1000)
-    # Plot local contribution
-    #force_plot_img = shap.plots.force(shap_values_client, matplotlib = True, show = False, contribution_threshold = 0.07, feature_names = selected_client_data.drop(columns = ['SK_ID_CURR']).columns)
-    #st.pyplot(force_plot_img, clear_figure = True)
-    fig, ax = plt.subplots(figsize = (10, 5))
-    shap.force_plot(prediction_score, shap_values.values[0], single_sample, feature_names = features)
-    st.pyplot(fig)
+    # Force plot (A MODIFIER)
+    #fig, ax = plt.subplots(figsize = (10, 5))
+    #shap.force_plot(prediction_score, shap_values.values[0], selected_client_data, feature_names = features)
+    #st.pyplot(fig)
 
 
 
@@ -175,8 +164,13 @@ def visualize_shap_values(selected_client_data, prediction_score):
 parquet_file = 'utils/X_test_SS.parquet'
 df = pq.read_table(parquet_file).to_pandas().reset_index(drop = True)
 
-parquet_file_train = 'utils/X_train_SS.parquet'
-df_train = pq.read_table(parquet_file_train).to_pandas().reset_index(drop = True)
+parquet_file_xtrain = 'utils/X_train_SS.parquet'
+df_x_train = pq.read_table(parquet_file_xtrain).to_pandas().reset_index(drop = True)
+
+parquet_file_ytrain = 'utils/y_train_SS.parquet'
+df_y_train = pq.read_table(parquet_file_ytrain).to_pandas().reset_index(drop = True)
+
+df_train = pd.concat([df_x_train, df_y_train])
 
 with open('utils/scaler.pkl', 'rb') as scaler_file:
     scaler = pickle.load(scaler_file)
@@ -260,7 +254,7 @@ elif app_mode == 'Vue client':
             emoji = "❌" if prediction_result == "Credit denied" else "✅"
 
             # Display prediction result with emoji
-            st.sidebar.write(f"{emoji} The credit is accepted if the score is greater than 0.5 or 50%, denied otherwise. In this case, the predicted score is {prediction_score:.2}")
+            st.sidebar.write(f"{emoji} The credit is accepted if the score is greater than 0.55 or 55%, denied otherwise. In this case, the predicted score is {prediction_score:.2}")
 
             st.sidebar.write(f"{emoji} The credit status is: {prediction_result}")
             st.sidebar.write(f"{emoji} The prediction score is: {prediction_score:.2%}")
@@ -277,18 +271,18 @@ elif app_mode == 'Vue client':
             visualize_shap_values(single_sample, prediction_score)
             st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")
 
-            # Dropdown for feature selection
-            selected_feature = st.selectbox('Select Feature:', df.columns, key = 'feature_selection')
+            # Dropdown pour sélectionner la feature qu'on veut visualiser
+            selected_feature = st.selectbox('Select Feature:', features, key = 'feature_selection')
             st.text("A graphical representation of the client's position among others based on the selected feature for the same target as the client.")
 
             # Display client features visualization
-            visualize_client_features(selected_client_data, selected_feature)
+            visualize_client_features(selected_client_data, selected_feature, prediction_result)
 
             # Graphique d’analyse bi-variée entre deux features sélectionnées
             st.subheader('Bi-variate Analysis:')
             # Select two features for bivariate analysis
-            selected_feature1 = st.selectbox('Select Feature 1:', df.columns, key = 'feature_selection1')
-            selected_feature2 = st.selectbox('Select Feature 2:', df.columns, key = 'feature_selection2')
+            selected_feature1 = st.selectbox('Select Feature 1:', features, key = 'feature_selection1')
+            selected_feature2 = st.selectbox('Select Feature 2:', features, key = 'feature_selection2')
 
             # Display bivariate analysis
             bivariate_analysis(selected_feature1, selected_feature2)

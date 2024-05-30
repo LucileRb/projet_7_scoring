@@ -170,8 +170,6 @@ df_x_train = pq.read_table(parquet_file_xtrain).to_pandas().reset_index(drop = T
 parquet_file_ytrain = 'utils/y_train_SS.parquet'
 df_y_train = pq.read_table(parquet_file_ytrain).to_pandas().reset_index(drop = True)
 
-df_train = pd.concat([df_x_train, df_y_train], axis = 1)
-
 with open('utils/scaler.pkl', 'rb') as scaler_file:
     scaler = pickle.load(scaler_file)
 

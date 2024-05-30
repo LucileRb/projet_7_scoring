@@ -90,22 +90,13 @@ def visualize_client_features(selected_client_data, selected_feature, prediction
         prediction_target = 1
 
     # Filter données sur catégories du client (pour le comparer avec les clients ayant les mêmes résultats de prédiction)
-    filtered_df = df_train[df_train['TARGET'] == prediction_target]
+    filtered_df = df_train[[selected_feature]][df_train['TARGET'] == prediction_target]
 
-    # Check if the selected feature is categorical or continuous
-    if df_train[selected_feature].dtype == 'int64':  # Categorical feature
-        sns.countplot(data = filtered_df, x = selected_feature, ax = ax)
-        ax.axvline(x = np.where(filtered_df[selected_feature].unique() == client_value)[0][0], color = 'red', linestyle = '--', label = f'Client {selected_feature}')
-        ax.set_title(f'Client Position in {selected_feature} Distribution')
-        ax.set_xlabel(selected_feature)
-        ax.set_ylabel('Count')
-
-    else:  # Continuous feature
-        sns.histplot(filtered_df[selected_feature], kde =True, ax = ax)
-        ax.axvline(x = client_value, color = 'red', linestyle = '--', label = f'Client {selected_feature}')
-        ax.set_title(f'Client Position in {selected_feature} Distribution')
-        ax.set_xlabel(selected_feature)
-        ax.set_ylabel('Density')
+    sns.histplot(filtered_df[selected_feature], kde = True, ax = ax)
+    ax.axvline(x = client_value, color = 'red', linestyle = '--', label = f'Client {selected_feature}')
+    ax.set_title(f'Client Position in {selected_feature} Distribution')
+    ax.set_xlabel(selected_feature)
+    ax.set_ylabel('Density')
 
     ax.legend()
     st.pyplot(fig, clear_figure = True)
@@ -244,12 +235,9 @@ elif app_mode == 'Client ID':
             visualize_shap_values(single_sample)
             st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")
 
-            # Dropdown pour sélectionner la feature qu'on veut visualiser
-            selected_feature = st.selectbox('Select Feature:', features, key = 'feature_selection')
-            st.text("A graphical representation of the client's position among others based on the selected feature for the same target as the client.")
-
             # Display client features visualization
-            visualize_client_features(selected_client_data, selected_feature, prediction_result)
+            visualize_client_features(selected_client_data, 'CNT_CHILDREN', prediction_result)
+            visualize_client_features(selected_client_data, 'PREVIOUS_LOANS_COUNT', prediction_result)
 
 
 

@@ -18,11 +18,11 @@ import json
 def get_prediction(data):
     api_url = 'https://scoring-credit-implementation-a56784ea5721.herokuapp.com/Prediction' # url de l'api sur heroku
     response = requests.post(api_url, json = data)
-    st.text(f'data: {data}')
-    st.text(f'reponse: {response}')
+   # st.text(f'data: {data}')
+   # st.text(f'reponse: {response}')
     try:
         result = response.json()
-        st.text(f'result: {result}')
+        #st.text(f'result: {result}')
         prediction_score = result['prediction'][0]
 
 
@@ -250,17 +250,17 @@ elif app_mode == 'Vue client':
         prediction_result, prediction_score = get_prediction(single_sample.tolist())
 
         # Display prediction result
-        st.sidebar.subheader('Prediction Result:')
+        st.subheader('Prediction Result:')
         if prediction_result is not None:
             # Determine emoji based on prediction result
             emoji = "❌" if prediction_result == "Credit denied" else "✅"
 
             # Display prediction result with emoji
-            st.sidebar.write(f"{emoji} The credit is accepted if the score is greater than 0.55 or 55%, denied otherwise. In this case, the predicted score is {prediction_score:.2}")
+            st.write(f"{emoji} The credit is accepted if the score is greater than 0.55 or 55%, denied otherwise. In this case, the predicted score is {prediction_score:.2}")
 
-            st.sidebar.write(f"{emoji} The credit status is: {prediction_result}")
-            st.sidebar.write(f"{emoji} The prediction score is: {prediction_score:.2%}")
-            st.sidebar.write(f"{emoji} The probability is: {prediction_score:.2}")
+            st.write(f"{emoji} The credit status is: {prediction_result}")
+            st.write(f"{emoji} The prediction score is: {prediction_score:.2%}")
+            st.write(f"{emoji} The probability is: {prediction_score:.2}")
 
 
             # Visualisation du score de crédit (jauge colorée)

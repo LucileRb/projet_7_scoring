@@ -98,6 +98,7 @@ def visualize_client_features(selected_client_data, selected_feature, prediction
         ax.set_title(f'Client Position in {selected_feature} Distribution')
         ax.set_xlabel(selected_feature)
         ax.set_ylabel('Count')
+
     else:  # Continuous feature
         sns.histplot(filtered_df[selected_feature], kde =True, ax = ax)
         ax.axvline(x = client_value, color = 'red', linestyle = '--', label = f'Client {selected_feature}')
@@ -106,36 +107,6 @@ def visualize_client_features(selected_client_data, selected_feature, prediction
         ax.set_ylabel('Density')
 
     ax.legend()
-    st.pyplot(fig, clear_figure = True)
-
-# Function for bivariate analysis
-def bivariate_analysis(feature1, feature2):
-    fig, ax = plt.subplots()
-
-    filtered_df = df_train[df_train['TARGET'] == int(prediction_result == 'Credit denied')]
-
-    # Check the types of the selected features
-    if filtered_df[feature1].dtype == 'int64' and filtered_df[feature2].dtype == 'int64':  # Categorical vs Categorical
-        sns.countplot(data = filtered_df, x = feature1, hue = feature2, ax = ax)
-        ax.set_title(f'Bivariate Analysis between {feature1} and {feature2}')
-        ax.set_xlabel(feature1)
-        ax.set_ylabel('Count')
-        ax.legend(title = feature2)
-    elif filtered_df[feature1].dtype != 'int64' and filtered_df[feature2].dtype != 'int64':  # Continuous vs Continuous
-        sns.scatterplot(data = filtered_df, x = feature1, y = feature2, ax = ax)
-        ax.set_title(f'Bivariate Analysis between {feature1} and {feature2}')
-        ax.set_xlabel(feature1)
-        ax.set_ylabel(feature2)
-    else:  # Continuous vs Categorical or Categorical vs Continuous
-        if filtered_df[feature1].dtype == 'int64':  # Categorical vs Continuous
-            categorical_feature, continuous_feature = feature1, feature2
-        else:  # Continuous vs Categorical
-            categorical_feature, continuous_feature = feature2, feature1
-        sns.boxplot(data = filtered_df, x = categorical_feature, y = continuous_feature, ax = ax)
-        ax.set_title(f'Bivariate Analysis between {categorical_feature} and {continuous_feature}')
-        ax.set_xlabel(categorical_feature)
-        ax.set_ylabel(continuous_feature)
-
     st.pyplot(fig, clear_figure = True)
 
 # Function to visualize SHAP values for the selected client
@@ -148,13 +119,6 @@ def visualize_shap_values(selected_client_data, prediction_score):
     fig, ax = plt.subplots(figsize = (10, 5))
     shap.waterfall_plot(shap_values[0])
     st.pyplot(fig)
-
-    # Force plot (A MODIFIER)
-    #fig, ax = plt.subplots(figsize = (10, 5))
-    #shap.force_plot(prediction_score, shap_values.values[0], selected_client_data, feature_names = features)
-    #st.pyplot(fig)
-
-
 
 
 ################################################ DATA & OUTILS ################################################
@@ -208,7 +172,7 @@ st.set_page_config(
 st.sidebar.image('scoring_app/app_illustrations/pret_a_depenser_logo.png')
 app_mode = st.sidebar.selectbox('Select Page', [
     'Home', # page d'accueil et description des variables - description des données aussi ? à voir
-    'Vue client', # page pour visualiser les informations descriptives relatives à un client (système de filtre) -> filtrer par ID client et visualiser les données du client
+    'Client ID', # page pour visualiser les informations descriptives relatives à un client (système de filtre) -> filtrer par ID client et visualiser les données du client
     'New prediction' # page pour faire les prédictions et expliquer le choix
     ])
 
@@ -233,24 +197,27 @@ if app_mode == 'Home':
     st.write("- :blue[DEF_30_CNT_SOCIAL_CIRCLE]     :     Combien d'observations des environs sociaux du client ont fait défaut avec un retard de paiement de 30 jours (30 DPD)")
 
 
-elif app_mode == 'Vue client':
+elif app_mode == 'Client ID':
     # Dropdown for client IDs in the sidebar
     selected_client_id = st.sidebar.selectbox('Select Client ID:', df.index.tolist())
 
-    # Display selected client's data in the main section
-    st.sidebar.header('Selected Client Data:')
+    # Données du client selectionné
     selected_client_data = df[features].loc[df.index == selected_client_id]
-    st.sidebar.write(selected_client_data)
-
     single_sample = np.array(selected_client_data).reshape(1, -1)
 
     # Button to trigger prediction in the sidebar
     if st.sidebar.button('Predict'):
+        st.header('ID client sélectionné')
+        st.write(selected_client_id)
+
+        st.subheader('Données du client:')
+        st.write(selected_client_data)
+
         # Make API request and get prediction
         prediction_result, prediction_score = get_prediction(single_sample.tolist())
 
         # Display prediction result
-        st.subheader('Prediction Result:')
+        st.subheader('Resultat de prédictions:')
         if prediction_result is not None:
             # Determine emoji based on prediction result
             emoji = "❌" if prediction_result == "Credit denied" else "✅"
@@ -280,15 +247,6 @@ elif app_mode == 'Vue client':
             # Display client features visualization
             visualize_client_features(selected_client_data, selected_feature, prediction_result)
 
-            # Graphique d’analyse bi-variée entre deux features sélectionnées
-            st.subheader('Bi-variate Analysis:')
-            # Select two features for bivariate analysis
-            selected_feature1 = st.selectbox('Select Feature 1:', features, key = 'feature_selection1')
-            selected_feature2 = st.selectbox('Select Feature 2:', features, key = 'feature_selection2')
-
-            # Display bivariate analysis
-            bivariate_analysis(selected_feature1, selected_feature2)
-            st.text("A graphical analysis of the relationship between two selected features for the same target as the client.")
 
 
 elif app_mode == 'New prediction':
@@ -348,32 +306,49 @@ elif app_mode == 'New prediction':
         prediction_result, prediction_score = get_prediction(single_sample.tolist())
         print(f'prediction: {prediction_score}')
 
-        # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
-        if prediction_result == 'Credit accepted':
-            # Prêt accepté
-            print('pret accepté')
-            file_ = open('scoring_app/app_illustrations/bank-loan-successfully-illustration-concept-white-background_701961-3161.avif', "rb")
-            contents = file_.read()
-            data_url = base64.b64encode(contents).decode('utf-8')
-            file_.close()
-            st.success('Selon notre prédiction, le prêt sera accordé')
-            st.markdown(f'<img src="data:image/gif;base64, {data_url}" alt="cat gif">', unsafe_allow_html = True)
-        else:
-            print('pret rejeté')
-            # Prêt rejeté
-            file = open('scoring_app/app_illustrations/Loan-Rejection.jpg', 'rb')
-            contents = file.read()
-            data_url_no = base64.b64encode(contents).decode('utf-8')
-            file.close()
-            st.error('Selon notre prédiction, le prêt ne sera pas accordé')
-            st.markdown(f'<img src="data:image/gif;base64, {data_url_no}" alt="cat gif">', unsafe_allow_html = True)
+        # Display prediction result
+        st.subheader('Resultat de prédictions:')
+        if prediction_result is not None:
+            # Determine emoji based on prediction result
 
-        st.divider()
+            # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
+            if prediction_result == 'Credit accepted':
+                # Prêt accepté
+                print('pret accepté')
+                file_ = open('scoring_app/app_illustrations/bank-loan-successfully-illustration-concept-white-background_701961-3161.avif', "rb")
+                contents = file_.read()
+                data_url = base64.b64encode(contents).decode('utf-8')
+                file_.close()
+                st.success('Selon notre prédiction, le prêt sera accordé')
+                st.markdown(f'<img src="data:image/gif;base64, {data_url}" alt="cat gif">', unsafe_allow_html = True)
+            else:
+                print('pret rejeté')
+                # Prêt rejeté
+                file = open('scoring_app/app_illustrations/Loan-Rejection.jpg', 'rb')
+                contents = file.read()
+                data_url_no = base64.b64encode(contents).decode('utf-8')
+                file.close()
+                st.error('Selon notre prédiction, le prêt ne sera pas accordé')
+                st.markdown(f'<img src="data:image/gif;base64, {data_url_no}" alt="cat gif">', unsafe_allow_html = True)
 
-        # Afficher l'explication de la prédiction (waterfall plot)
-        
-        shap_values = explainer(single_sample)
-        st.header('Explication de la prédiction:')
-        fig, ax = plt.subplots(figsize = (10, 5))
-        shap.waterfall_plot(shap_values[0])
-        st.pyplot(fig)
+            emoji = "❌" if prediction_result == "Credit denied" else "✅"
+
+            # Display prediction result with emoji
+            st.write(f"{emoji} The credit is accepted if the score is greater than 0.55 or 55%, denied otherwise. In this case, the predicted score is {prediction_score:.2}")
+
+            st.write(f"{emoji} The credit status is: {prediction_result}")
+            st.write(f"{emoji} The prediction score is: {prediction_score:.2%}")
+            st.write(f"{emoji} The probability is: {prediction_score:.2}")
+
+
+            # Visualisation du score de crédit (jauge colorée)
+            st.subheader('Credit Score Visualization:')
+            credit_score_gauge(prediction_score)
+            st.text("A color gauge representing the credit score. The client's score is indicated by a marker on the gauge.")
+
+            st.divider()
+
+            # Visualisation de la contribution des features (SHAP - waterfall plot)
+            st.subheader('Feature Contribution:')
+            visualize_shap_values(single_sample, prediction_score)
+            st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")

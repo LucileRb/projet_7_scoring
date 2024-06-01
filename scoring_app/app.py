@@ -28,9 +28,9 @@ def get_prediction(data):
 
         # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
         if prediction_score > 0.55:
-            prediction_result = 'Credit accepté'
+            prediction_result = 'Crédit accepté'
         else:
-            prediction_result = 'Credit refusé'
+            prediction_result = 'Crédit refusé'
 
         return prediction_result, prediction_score
 

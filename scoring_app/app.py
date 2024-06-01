@@ -28,9 +28,9 @@ def get_prediction(data):
 
         # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
         if prediction_score > 0.55:
-            prediction_result = 'Credit accepted'
+            prediction_result = 'Credit accepté'
         else:
-            prediction_result = 'Credit denied'
+            prediction_result = 'Credit refusé'
 
         return prediction_result, prediction_score
 
@@ -66,7 +66,7 @@ def credit_score_gauge(score):
     # Draw dotted line at 0.55 threshold with legend
     ax.plot([0.55, 0.55], [0, 0.55], linestyle = '--', color = 'black', label = 'Threshold')
     # Draw prediction indicator with legend
-    ax.plot([score, score], [0, 0.5], color = 'black', linewidth = 2, label = 'Client score')
+    ax.plot([score, score], [0, 0.5], color = 'black', linewidth = 2, label = 'Score client')
     # Draw score below with the same color as the prediction indicator
     ax.text(score, -0.7, f'{score:.2f}', fontsize = 14, ha = 'center', va = 'bottom', color = 'black')
     # Add legend
@@ -84,9 +84,9 @@ def visualize_client_features(selected_client_data, selected_feature, prediction
     # Plot client position in distribution
     fig, ax = plt.subplots()
 
-    if prediction_result == 'Credit denied':
+    if prediction_result == 'Crédit refusé':
         prediction_target = 0
-    elif prediction_result == 'Credit accepted':
+    elif prediction_result == 'Crédit accepté':
         prediction_target = 1
 
     # Filter données sur catégories du client (pour le comparer avec les clients ayant les mêmes résultats de prédiction)
@@ -94,16 +94,16 @@ def visualize_client_features(selected_client_data, selected_feature, prediction
 
     sns.histplot(filtered_df[selected_feature], kde = True, ax = ax)
     ax.axvline(x = client_value, color = 'red', linestyle = '--', label = f'Client {selected_feature}')
-    ax.set_title(f'Client Position in {selected_feature} Distribution')
+    ax.set_title(f'Position du client dans la distribution de la variable {selected_feature}')
     ax.set_xlabel(selected_feature)
-    ax.set_ylabel('Density')
+    ax.set_ylabel('Densité')
 
     ax.legend()
     st.pyplot(fig, clear_figure = True)
 
 # Function to visualize SHAP values for the selected client
 def visualize_shap_values(selected_client_data):
-    st.write("Features that contribute the most to the score globally")
+    st.write('Features qui contribuent le plus au score global')
 
     # Waterfall plot
     shap_values = explainer(selected_client_data)
@@ -162,10 +162,10 @@ st.set_page_config(
 
 # Définition des deux pages de l'application
 st.sidebar.image('scoring_app/app_illustrations/pret_a_depenser_logo.png')
-app_mode = st.sidebar.selectbox('Select Page', [
+app_mode = st.sidebar.selectbox('Choix de la page', [
     'Home', # page d'accueil et description des variables - description des données aussi ? à voir
     'Client ID', # page pour visualiser les informations descriptives relatives à un client (système de filtre) -> filtrer par ID client et visualiser les données du client
-    'New prediction' # page pour faire les prédictions et expliquer le choix
+    'Nouvelle prédiction' # page pour faire les prédictions et expliquer le choix
     ])
 
 if app_mode == 'Home':
@@ -193,14 +193,14 @@ elif app_mode == 'Client ID':
     st.title('FICHE CLIENT')
     st.divider()
     # Dropdown for client IDs in the sidebar
-    selected_client_id = st.sidebar.selectbox('Select Client ID:', df.index.tolist())
+    selected_client_id = st.sidebar.selectbox("Sélectionnez l'ID client:", df.index.tolist())
 
     # Données du client selectionné
     selected_client_data = df[features].loc[df.index == selected_client_id]
     single_sample = np.array(selected_client_data).reshape(1, -1)
 
     # Button to trigger prediction in the sidebar
-    if st.sidebar.button('Predict'):
+    if st.sidebar.button('Prédiction'):
         st.header('ID client sélectionné')
         st.write(selected_client_id)
         st.divider()
@@ -212,28 +212,31 @@ elif app_mode == 'Client ID':
         prediction_result, prediction_score = get_prediction(single_sample.tolist())
 
         # Display prediction result
-        st.subheader('Resultat de prédictions:')
+        st.subheader('Résultat de prédictions:')
         if prediction_result is not None:
             # Determine emoji based on prediction result
-            emoji = "❌" if prediction_result == "Credit denied" else "✅"
+            emoji = "❌" if prediction_result == "Crédit refusé" else "✅"
 
             # Display prediction result with emoji
-            st.write(f"{emoji} The credit is accepted if the score is greater than 0.55 or 55%, denied otherwise. In this case, the predicted score is {prediction_score:.2}")
-
-            st.write(f"{emoji} The credit status is: {prediction_result}")
-            st.write(f"{emoji} The prediction score is: {prediction_score:.2%}")
-            st.write(f"{emoji} The probability is: {prediction_score:.2}")
-
+            st.subheader('Explication du résultat:')
+            st.write(f"{emoji} Le crédit est accepté si le score est supérieur à 0,55 ou 55%, sinon il est refusé. Dans ce cas ci, le score prédit est {prediction_score:.2}")
+            st.write(f"{emoji} Le statut du crédit est : {prediction_result}")
+            st.write(f"{emoji} Le score de prédiction est : {prediction_score:.2%}")
+            st.write(f"{emoji} La probabilité est : {prediction_score:.2}")
 
             # Visualisation du score de crédit (jauge colorée)
-            st.subheader('Credit Score Visualization:')
+            st.subheader('Visualisation du score crédit :')
             credit_score_gauge(prediction_score)
-            st.text("A color gauge representing the credit score. The client's score is indicated by a marker on the gauge.")
+            st.text("Une jauge de couleur représentant la cote de crédit. Le score du client est indiqué par un marqueur sur la jauge.")
+
+            st.divider()
 
             # Visualisation de la contribution des features
-            st.subheader('Feature Contribution:')
+            st.subheader('Contribution des variables :')
             visualize_shap_values(single_sample)
-            st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")
+            st.text("Graphique à barres et diagramme de force montrant les caractéristiques qui contribuent le plus au score de crédit globalement et pour le client sélectionné.")
+
+            st.divider()
 
             # Display client features visualization
             visualize_client_features(selected_client_data, 'CNT_CHILDREN', prediction_result)
@@ -241,7 +244,7 @@ elif app_mode == 'Client ID':
 
 
 
-elif app_mode == 'New prediction':
+elif app_mode == 'Nouvelle prédiction':
     st.image('scoring_app/app_illustrations/multi-currency-iban.jpg', width = 800)
 
     st.title('OUTILS DE PREDICTION')
@@ -253,7 +256,7 @@ elif app_mode == 'New prediction':
     st.subheader(phrase)
     st.divider()
 
-    st.sidebar.header('Informations à propos du client:')
+    st.sidebar.header('Informations à propos du nouveau client:')
 
     childrennumber = st.sidebar.radio("Nombre d'enfants", options = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
     obs_30_cnt_social_circle = st.sidebar.slider("Nb d'observations de l'entourage du client (30 derniers jours)", 0, 350, 0)
@@ -296,21 +299,21 @@ elif app_mode == 'New prediction':
 
     single_sample = np.array(feature_list).reshape(1, -1)
 
-    if st.button('Predict'):
+    if st.button('Prédiction'):
 
         # faire la prédiction en appelant l'api
         prediction_result, prediction_score = get_prediction(single_sample.tolist())
-        print(f'prediction: {prediction_score}')
+        print(f'Prédiction: {prediction_score}')
 
         # Display prediction result
-        st.subheader('Resultat de prédictions:')
+        st.subheader('Résultat de prédictions:')
         if prediction_result is not None:
             # Determine emoji based on prediction result
 
             # Classify as 'Credit accepted' if probability of class 0 is greater than 0.5
-            if prediction_result == 'Credit accepted':
+            if prediction_result == 'Crédit accepté':
                 # Prêt accepté
-                print('pret accepté')
+                print('Prêt accepté')
                 file_ = open('scoring_app/app_illustrations/bank-loan-successfully-illustration-concept-white-background_701961-3161.avif', "rb")
                 contents = file_.read()
                 data_url = base64.b64encode(contents).decode('utf-8')
@@ -318,7 +321,7 @@ elif app_mode == 'New prediction':
                 st.success('Selon notre prédiction, le prêt sera accordé')
                 st.markdown(f'<img src="data:image/gif;base64, {data_url}" alt="cat gif">', unsafe_allow_html = True)
             else:
-                print('pret rejeté')
+                print('Prêt rejeté')
                 # Prêt rejeté
                 file = open('scoring_app/app_illustrations/Loan-Rejection.jpg', 'rb')
                 contents = file.read()
@@ -329,28 +332,29 @@ elif app_mode == 'New prediction':
 
             st.divider()
 
-            emoji = '❌' if prediction_result == 'Credit denied' else '✅'
+            emoji = '❌' if prediction_result == 'Crédit refusé' else '✅'
 
             # Display prediction result with emoji
             st.subheader('Explication du résultat:')
-            st.write(f"{emoji} The credit is accepted if the score is greater than 0.55 or 55%, denied otherwise. In this case, the predicted score is {prediction_score:.2}")
-            st.write(f"{emoji} The credit status is: {prediction_result}")
-            st.write(f"{emoji} The prediction score is: {prediction_score:.2%}")
-            st.write(f"{emoji} The probability is: {prediction_score:.2}")
+            st.write(f"{emoji} Le crédit est accepté si le score est supérieur à 0,55 ou 55%, sinon il est refusé. Dans ce cas ci, le score prédit est {prediction_score:.2}")
+            st.write(f"{emoji} Le statut du crédit est : {prediction_result}")
+            st.write(f"{emoji} Le score de prédiction est : {prediction_score:.2%}")
+            st.write(f"{emoji} La probabilité est : {prediction_score:.2}")
+
 
             st.divider()
 
             # Visualisation du score de crédit (jauge colorée)
-            st.subheader('Credit Score Visualization:')
+            st.subheader('Visualisation du score crédit :')
             credit_score_gauge(prediction_score)
-            st.text("A color gauge representing the credit score. The client's score is indicated by a marker on the gauge.")
+            st.text("Une jauge de couleur représentant la cote de crédit. Le score du client est indiqué par un marqueur sur la jauge.")
 
             st.divider()
 
-            # Visualisation de la contribution des features (SHAP - waterfall plot)
-            st.subheader('Feature Contribution:')
+            # Visualisation de la contribution des features
+            st.subheader('Contribution des variables :')
             visualize_shap_values(single_sample)
-            st.text("Bar chart and force plot showing the features that contribute the most to the credit score globally and for the selected client.")
+            st.text("Graphique à barres et diagramme de force montrant les caractéristiques qui contribuent le plus au score de crédit globalement et pour le client sélectionné.")
 
 
 ################################################################################################ END ################################################################################################

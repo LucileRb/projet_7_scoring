@@ -1,0 +1,26 @@
+name: Run Tests
+
+on: [push]
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11.3 # Replace with your desired Python version
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Add any additional dependencies needed for testing
+
+    - name: Run flask api Tests
+      run: |
+        python -m unittest discover -s ./scoring_app -p 'test_api.py'

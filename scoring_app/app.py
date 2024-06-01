@@ -329,7 +329,7 @@ elif app_mode == 'New prediction':
 
             st.divider()
 
-            emoji = "❌" if prediction_result == "Credit denied" else "✅"
+            emoji = '❌' if prediction_result == 'Credit denied' else '✅'
 
             # Display prediction result with emoji
             st.subheader('Explication du résultat:')

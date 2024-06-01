@@ -5,3 +5,4 @@ mlartifacts/
 cours_et_exemples/
 images_presentation/
 catboost_info/
+__pycache__
